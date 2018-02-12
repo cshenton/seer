@@ -1,0 +1,98 @@
+// Copyright (c) 2018 "Chrono Technologies Pty Ltd".
+// This file is part of Seer, by Chu Labs.
+
+// Seer is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+
+// You should have received a copy of the GNU Affero General Public License
+// along with this program. If not, see <http://www.gnu.org/licenses/>.
+syntax = "proto3";
+
+package seer;
+
+// The seer service definition
+service Seer {
+  // Creates a stream
+  rpc CreateStream (CreateStreamRequest) returns (Stream) {}
+  // Gets a stream
+  rpc GetStream (GetStreamRequest) returns (Stream) {}
+  // Updates a stream
+  rpc UpdateStream (UpdateStreamRequest) returns (Stream) {}
+  // Deletes a stream
+  rpc DeleteStream (DeleteStreamRequest) returns (google.protobuf.Empty) {}
+  // Lists streams
+  rpc ListStreams (ListStreamsRequest) returns (ListStreamsResponse) {}
+  // Gets a forecast
+  rpc GetForecast (GetForecastRequest) returns (Forecast) {}
+}
+
+// A data stream
+message Stream {
+  string name = 1;
+  double period = 2;
+  Timestamp last_event_time = 3;
+}
+
+// A set of ordered events (values and times) in a stream
+message Event {
+  repeated Timestamp times = 1;
+  repeated double values = 2;
+}
+
+// A confidence interval
+message Interval {
+  double probability = 1;
+  repeated double lower_bound = 2;
+  repeated double upper_bound = 3;
+}
+
+// A forecast, with point predictions and confidence intervals
+message Forecast {
+  repeated Timestamp times = 1;
+  repeated double values = 2;
+  repeated Interval intervals = 3;
+}
+
+
+// The request message containing the stream to be created
+message CreateStreamRequest {
+  Stream stream = 1;
+}
+
+// The request message containing the name of the requested stream
+message GetStreamRequest {
+  string name = 1;
+}
+
+// The request message containing the name of the stream to be deleted
+message DeleteStreamRequest {
+  string name = 1;
+}
+
+// The request message containing the paging data for the stream to list
+message ListStreamsRequest {
+  int32 page_size = 1;
+  int32 page_number = 2;
+}
+
+// The response message containing a list of streams
+message ListStreamsResponse {
+  repeated Stream streams = 1;
+}
+
+// The request message containing events to apply to the stream
+message UpdateStreamRequest {
+  Event event = 1;
+}
+
+// The request message containing the forecast length
+message GetForecastRequest {
+  int32 n = 1;
+}
