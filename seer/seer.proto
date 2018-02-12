@@ -37,11 +37,22 @@ service Seer {
   rpc GetForecast (GetForecastRequest) returns (Forecast) {}
 }
 
+enum Domain {
+  CONTINUOUS = 0;
+  CONTINUOUS_RIGHT = 1;
+  CONTINUOUS_INTERVAL = 2;
+  DISCRETE_RIGHT = 3;
+  DISCRETE_INTERVAL = 4;
+}
+
 // A data stream
 message Stream {
   string name = 1;
   double period = 2;
   google.protobuf.Timestamp last_event_time = 3;
+  Domain domain = 4;
+  double min = 5;
+  double max = 6;
 }
 
 // A set of ordered events (values and times) in a stream
