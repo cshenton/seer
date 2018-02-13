@@ -29,7 +29,8 @@ type Deterministic struct {
 }
 
 // Filters generates process and observation matrices for this linear system.
-func (d *Deterministic) Filters(noise, walk float64) (p, pc, o, oc *mat.Dense) {
+func (d *Deterministic) Filters(period float64) (p, pc, o, oc *mat.Dense) {
+
 	return
 }
 
