@@ -7,11 +7,6 @@ import (
 	"gonum.org/v1/gonum/mat"
 )
 
-// Deterministic is the type against which we apply deterministic model updates.
-type Deterministic struct {
-	*mv.Normal
-}
-
 // Harmonics provides a consistent method for generating fourier harmonics for
 // a stream, it does so by splitting harmonics into powers of 10.
 func Harmonics(min, max float64) []float64 {
@@ -21,11 +16,16 @@ func Harmonics(min, max float64) []float64 {
 
 	for i := 0; i < mag; i++ {
 		for j := 1; j < 10; j++ {
-			harmonics[9*i+j] = 1 / math.Pow(10, float64(i)) / float64(j)
+			harmonics[9*i+j-1] = (max / math.Pow(10, float64(i))) / float64(j)
 		}
 	}
-	harmonics[9+mag] = 1 / math.Pow(10, float64(mag))
+	harmonics[9*mag] = max / math.Pow(10, float64(mag))
 	return harmonics
+}
+
+// Deterministic is the type against which we apply deterministic model updates.
+type Deterministic struct {
+	*mv.Normal
 }
 
 // Filters generates process and observation matrices for this linear system.
