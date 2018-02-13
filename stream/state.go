@@ -3,31 +3,37 @@ package stream
 import (
 	"time"
 
-	"github.com/chulabs/seer/dist/uv"
+	"github.com/chulabs/seer/model"
 )
-
-// History contains the last two observations for this stream, it is required
-// to do covariance estimation in real time.
-type History [2]float64
-
-// Update shifts the history one place down and adds a new value.
-func (h History) Update(v float64) {
-	h[1] = h[0]
-	h[0] = v
-}
 
 // State stores dynamic state about a stream.
 type State struct {
 	Time          time.Time
-	Deterministic Something
-	Stochastic    Something
-	Theta         *uv.InverseGamma
-	Zeta          *uv.InverseGamma
-	History       History
+	Deterministic *model.Deterministic
+	Stochastic    *model.Stochastic
+	RCE           *model.RCE
 }
 
 // NewState initialises a state given a stream config.
 func NewState(c *Config) (s *State, err error) {
+	// create the priors for det, stoch
+	// create the priors for theta, zeta
+	// initialise the history
 	s = &State{}
-	return
+	return s, nil
 }
+
+// Update iterates the State in response to an observed event.
+func (s *State) Update(v, period float64) {
+	// get covariances from RCE
+	// construct filters using period (and external package)
+	// forward pass deterministic filter, get residual, state
+	// update rce on residual
+	// forward pass stochastic filter, state
+	// increment time
+	// apply new time
+	// apply new states
+	// apply new RCE
+}
+
+// Forecast passes forward through the filter and returns
