@@ -13,7 +13,17 @@ const (
 	DiscreteInterval   Domain = 4
 )
 
-// IsInterval returns whether the domain is restricted to an interval
+// IsInterval returns whether the domain is restricted to an interval.
 func (d Domain) IsInterval() bool {
 	return d == ContinuousInterval || d == DiscreteInterval
+}
+
+// IsRight returns whether the domain is open to the right only.
+func (d Domain) IsRight() bool {
+	return d == ContinuousRight || d == DiscreteRight
+}
+
+// IsOpen returns whether the domain is unconstrained.
+func (d Domain) IsOpen() bool {
+	return d == Continuous
 }
