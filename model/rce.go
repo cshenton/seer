@@ -8,7 +8,7 @@ import (
 
 // History contains the last two observations for this stream, it is required
 // to do covariance estimation in real time.
-type History [2]float64
+type History []float64
 
 // Update shifts the history one place down and adds a new value.
 func (h History) Update(v float64) {
@@ -22,6 +22,12 @@ type RCE struct {
 	Zeta    *uv.InverseGamma
 	History History
 }
+
+// NewRCE constructs an RCE with appropriate priors for theta and zeta.
+// func NewRCE() (r *RCE) {
+// 	h := History([]float64{0, 0})
+
+// }
 
 // Walk returns the current walk covariance.
 func (r *RCE) Walk() float64 {

@@ -1,6 +1,9 @@
 package uv
 
-import "math"
+import (
+	"errors"
+	"math"
+)
 
 // InverseGamma is the inverse gamma distribution.
 type InverseGamma struct {
@@ -8,11 +11,17 @@ type InverseGamma struct {
 	Scale float64
 }
 
-// Update applies a conjugate prior update where ig is the scale
-// distribution, v is the observed value, and m is the normal mean.
-func (i *InverseGamma) Update(v, m float64) {
-	i.Shape += 0.5
-	i.Scale += math.Pow(v-m, 2) / 2
+// NewInverseGamma constructs an InverseGamma, validating the provided parameters.
+func NewInverseGamma(shape, scale float64) (i *InverseGamma, err error) {
+	if shape <= 0.0 || scale <= 0.0 {
+		err := errors.New("shape and scale must both be strictly positive")
+		return nil, err
+	}
+	i = &InverseGamma{
+		Shape: shape,
+		Scale: scale,
+	}
+	return i, nil
 }
 
 // Mean returns the first moment of the distribution, for shape > 1.
