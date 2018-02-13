@@ -10,6 +10,15 @@ type Stochastic struct {
 	*mv.Normal
 }
 
+// NewStochastic returns a stochastic with a proper state prior.
+func NewStochastic() (s *Stochastic) {
+	loc := []float64{0}
+	cov := []float64{1e12}
+	n, _ := mv.NewNormal(loc, cov)
+	s = &Stochastic{n}
+	return s
+}
+
 // Filters generates process and observation matrices for this linear system.
 func (s *Stochastic) Filters(noise, walk float64) (p, pc, o, oc *mat.Dense) {
 	p = mat.NewDense(1, 1, []float64{1})

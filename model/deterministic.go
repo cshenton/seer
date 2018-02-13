@@ -7,6 +7,8 @@ import (
 	"gonum.org/v1/gonum/mat"
 )
 
+const maxHarmonic = float64(31577600)
+
 // Harmonics provides a consistent method for generating fourier harmonics for
 // a stream, it does so by splitting harmonics into powers of 10.
 func Harmonics(min, max float64) []float64 {
@@ -27,6 +29,12 @@ func Harmonics(min, max float64) []float64 {
 type Deterministic struct {
 	*mv.Normal
 }
+
+// NewDeterministic creates and returns a Deterministic with a proper state prior.
+// func NewDeterministic(period float64) (d *Deterministic) {
+// 	dim := len(Harmonics(period, maxHarmonic))
+
+// }
 
 // Filters generates process and observation matrices for this linear system.
 func (d *Deterministic) Filters(period float64) (p, pc, o, oc *mat.Dense) {
