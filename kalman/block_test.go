@@ -1,9 +1,9 @@
-package model_test
+package kalman_test
 
 import (
 	"testing"
 
-	"github.com/chulabs/seer/model"
+	"github.com/chulabs/seer/kalman"
 	"gonum.org/v1/gonum/mat"
 )
 
@@ -46,7 +46,7 @@ func TestBlockDiag(t *testing.T) {
 	}
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			b := model.BlockDiag(tc.mats...)
+			b := kalman.BlockDiag(tc.mats...)
 			if !mat.Equal(b, tc.output) {
 				t.Errorf("Expected result %v, but got %v", tc.output, b)
 			}

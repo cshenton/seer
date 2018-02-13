@@ -30,12 +30,18 @@ type Deterministic struct {
 
 // Filters generates process and observation matrices for this linear system.
 func (d *Deterministic) Filters(period float64) (p, pc, o, oc *mat.Dense) {
-
+	// make deterministic system from period, noise param
+	// return
 	return
 }
 
 // Update performs a filter step against the deterministic state.
-func (d *Deterministic) Update(noise, walk, val float64) float64 {
+func (d *Deterministic) Update(noise, walk, period, val float64) float64 {
+	// Get System from period, noise param
+	// Filter and get residual
+	// update state
+	// return residual
+
 	// p, pc, o, oc := s.Filters(noise, walk)
 	return 1.0
 }

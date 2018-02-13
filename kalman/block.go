@@ -1,4 +1,4 @@
-package model
+package kalman
 
 import (
 	"gonum.org/v1/gonum/mat"
