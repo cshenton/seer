@@ -2,6 +2,8 @@ package stream
 
 import (
 	"time"
+
+	"github.com/chulabs/seer/dist/uv"
 )
 
 // History contains the last two observations for this stream, it is required
@@ -19,8 +21,8 @@ type State struct {
 	Time          time.Time
 	Deterministic Something
 	Stochastic    Something
-	Theta         float64
-	Zeta          float64
+	Theta         *uv.InverseGamma
+	Zeta          *uv.InverseGamma
 	History       History
 }
 

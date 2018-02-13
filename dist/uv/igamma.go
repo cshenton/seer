@@ -1,4 +1,4 @@
-package dist
+package uv
 
 import "math"
 
@@ -8,9 +8,9 @@ type InverseGamma struct {
 	Scale float64
 }
 
-// UpdateNormal applies a conjugate prior update where ig is the scale
+// Update applies a conjugate prior update where ig is the scale
 // distribution, v is the observed value, and m is the normal mean.
-func (i *InverseGamma) UpdateNormal(v, m float64) {
+func (i *InverseGamma) Update(v, m float64) {
 	i.Shape += 0.5
 	i.Scale += math.Pow(v-m, 2) / 2
 }
