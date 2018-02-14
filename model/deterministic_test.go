@@ -18,13 +18,16 @@ func TestHarmonics(t *testing.T) {
 	}{
 		{
 			"1 and 10", 1, 10, []float64{
-				10.0, 10.0 / 2, 10.0 / 3, 10.0 / 4, 10.0 / 5, 10.0 / 6, 10.0 / 7, 10.0 / 8, 10.0 / 9, 10.0 / 10.0,
+				10.0, 10.0 / 2, 10.0 / 3, 10.0 / 4, 10.0 / 5, 10.0 / 6, 10.0 / 7, 10.0 / 8,
+				10.0 / 9, 10.0 / 10.0,
 			},
 		},
 		{
 			"1 and 100", 1, 100, []float64{
-				100.0, 100.0 / 2, 100.0 / 3, 100.0 / 4, 100.0 / 5, 100.0 / 6, 100.0 / 7, 100.0 / 8, 100.0 / 9, 100.0 / 10,
-				100.0 / 20, 100.0 / 30, 100.0 / 40, 100.0 / 50, 100.0 / 60, 100.0 / 70, 100.0 / 80, 100.0 / 90, 100.0 / 100,
+				100.0, 100.0 / 2, 100.0 / 3, 100.0 / 4, 100.0 / 5, 100.0 / 6, 100.0 / 7, 100.0 / 8,
+				100.0 / 9, 100.0 / 10,
+				100.0 / 20, 100.0 / 30, 100.0 / 40, 100.0 / 50, 100.0 / 60, 100.0 / 70, 100.0 / 80,
+				100.0 / 90, 100.0 / 100,
 			},
 		},
 		{
@@ -59,6 +62,31 @@ func TestHarmonics(t *testing.T) {
 			for i := range tc.result {
 				if h[i] != tc.result[i] {
 					t.Fatalf("expected %v at position %v, but got %v", tc.result[i], i, h[i])
+				}
+			}
+		})
+	}
+}
+
+func TestDiag(t *testing.T) {
+	tt := []struct {
+		name string
+		v    []float64
+		d    []float64
+	}{
+		{"1x1", []float64{1}, []float64{1}},
+		{"2x2", []float64{2, 1}, []float64{2, 0, 0, 1}},
+		{"3x3", []float64{3, 2, 1}, []float64{3, 0, 0, 0, 2, 0, 0, 0, 1}},
+	}
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			d := model.Diag(tc.v)
+			if len(d) != len(tc.d) {
+				t.Fatalf("expected result length %v, got %v", len(tc.d), len(d))
+			}
+			for i := range d {
+				if d[i] != tc.d[i] {
+					t.Errorf("mismatch at %v, expected %v, got %v", i, tc.d[i], d[i])
 				}
 			}
 		})

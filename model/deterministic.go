@@ -25,6 +25,15 @@ func Harmonics(min, max float64) []float64 {
 	return harmonics
 }
 
+// Diag returns the corresponding diagonal square matrix values given diag values.
+func Diag(v []float64) (d []float64) {
+	d = make([]float64, len(v)*len(v))
+	for i := range v {
+		d[i*(1+len(v))] = v[i]
+	}
+	return d
+}
+
 // Deterministic is the type against which we apply deterministic model updates.
 type Deterministic struct {
 	*mv.Normal

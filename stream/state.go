@@ -16,10 +16,11 @@ type State struct {
 
 // NewState initialises a state given a stream config.
 func NewState(c *Config) (s *State, err error) {
-	// create the priors for det, stoch
-	// create the priors for theta, zeta
-	// initialise the history
-	s = &State{}
+	s = &State{
+		Deterministic: nil,
+		Stochastic:    model.NewStochastic(),
+		RCE:           model.NewRCE(),
+	}
 	return s, nil
 }
 
