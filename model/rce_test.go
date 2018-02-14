@@ -17,3 +17,60 @@ func TestHistoryUpdate(t *testing.T) {
 		t.Errorf("expected entry 1 to be %v, but it was %v", 1, h[1])
 	}
 }
+
+func TestNewRCE(t *testing.T) {
+	r := model.NewRCE()
+
+	if r.History[0] != 0 {
+		t.Errorf("expected history 0 of %v, but it was %v", 0, r.History[0])
+	}
+	if r.History[1] != 0 {
+		t.Errorf("expected history 1 of %v, but it was %v", 0, r.History[1])
+	}
+	if r.Theta.Scale != 180 {
+		t.Errorf("expected theta scale of %v, but it was %v", 180, r.Theta.Scale)
+	}
+	if r.Zeta.Scale != 100 {
+		t.Errorf("expected zeta scale of %v, but it was %v", 100, r.Zeta.Scale)
+	}
+}
+
+func TestRCEWalk(t *testing.T) {
+	r := model.NewRCE()
+
+	if r.Walk() != 10.0 {
+		t.Errorf("expected walk covariance of %v, but it was %v", 10.0, r.Walk())
+	}
+}
+
+func TestRCENoise(t *testing.T) {
+	r := model.NewRCE()
+
+	if r.Noise() != 80.0 {
+		t.Errorf("expected Noise covariance of %v, but it was %v", 80.0, r.Noise())
+	}
+}
+
+func TestRCEUpdate(t *testing.T) {
+	r := model.NewRCE()
+	r.Update(1.0)
+
+	if r.Theta.Shape != 2.5 {
+		t.Errorf("expected theta shape %v, got %v", 2.5, r.Theta.Shape)
+	}
+	if r.Theta.Scale != 180.5 {
+		t.Errorf("expected theta scale %v, got %v", 180.5, r.Theta.Scale)
+	}
+	if r.Zeta.Shape != 2.5 {
+		t.Errorf("expected zeta shape %v, got %v", 2.5, r.Zeta.Shape)
+	}
+	if r.Zeta.Scale != 100.5 {
+		t.Errorf("expected theta scale %v, got %v", 100.5, r.Zeta.Scale)
+	}
+	if r.History[0] != 1 {
+		t.Errorf("expected history 0 of %v, got %v", 1, r.History[0])
+	}
+	if r.History[1] != 0 {
+		t.Errorf("expected history 1 of %v, got %v", 0, r.History[1])
+	}
+}

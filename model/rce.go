@@ -24,10 +24,18 @@ type RCE struct {
 }
 
 // NewRCE constructs an RCE with appropriate priors for theta and zeta.
-// func NewRCE() (r *RCE) {
-// 	h := History([]float64{0, 0})
+func NewRCE() (r *RCE) {
+	h := History([]float64{0, 0})
+	t, _ := uv.NewInverseGamma(2, 180)
+	z, _ := uv.NewInverseGamma(2, 100)
 
-// }
+	r = &RCE{
+		Theta:   t,
+		Zeta:    z,
+		History: h,
+	}
+	return r
+}
 
 // Walk returns the current walk covariance.
 func (r *RCE) Walk() float64 {
@@ -41,7 +49,9 @@ func (r *RCE) Noise() float64 {
 
 // Update updates the covariance estimator.
 func (r *RCE) Update(v float64) {
+	r.Zeta.Shape += 0.5
+	r.Theta.Shape += 0.5
+	r.Zeta.Scale += math.Pow(v-r.History[0], 2) / 2
+	r.Theta.Scale += math.Pow(v-r.History[1], 2) / 2
 	r.History.Update(v)
-	r.Zeta.Update(v-r.History[0], 0)
-	r.Theta.Update(v-r.History[1], 0)
 }
