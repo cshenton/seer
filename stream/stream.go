@@ -12,13 +12,9 @@ func New(name string, period, min, max float64, domain int) (s *Stream, err erro
 	if err != nil {
 		return nil, err
 	}
-	state, err := NewState(conf)
-	if err != nil {
-		return nil, err
-	}
 	s = &Stream{
 		Config: conf,
-		State:  state,
+		State:  NewState(conf),
 	}
 	return s, nil
 }

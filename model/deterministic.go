@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	maxHarmonic = float64(31577600)
+	maxHarmonic = 31577600
 	harmonicVar = 1e4
 	levelVar    = 1e15
 	trendVar    = 1e5

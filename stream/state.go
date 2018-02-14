@@ -15,13 +15,13 @@ type State struct {
 }
 
 // NewState initialises a state given a stream config.
-func NewState(c *Config) (s *State, err error) {
+func NewState(c *Config) (s *State) {
 	s = &State{
-		Deterministic: nil,
+		Deterministic: model.NewDeterministic(c.Period),
 		Stochastic:    model.NewStochastic(),
 		RCE:           model.NewRCE(),
 	}
-	return s, nil
+	return s
 }
 
 // Update iterates the State in response to an observed event.
