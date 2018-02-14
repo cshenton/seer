@@ -92,3 +92,30 @@ func TestDiag(t *testing.T) {
 		})
 	}
 }
+
+func TestNewDeterministic(t *testing.T) {
+	loc := []float64{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+	cov := model.Diag([]float64{
+		1e15, 1e5, 1e4, 1e4, 1e4, 1e4, 1e4, 1e4, 1e4, 1e4, 1e4,
+		1e4, 1e4, 1e4, 1e4, 1e4, 1e4, 1e4, 1e4, 1e4, 1e4, 1e4,
+	})
+	d := model.NewDeterministic(604800)
+
+	if len(loc) != len(d.Location) {
+		t.Fatalf("location length was %v, expected %v", len(d.Location), len(loc))
+	}
+	if len(cov) != len(d.Covariance) {
+		t.Fatalf("covariance length was %v, expected %v", len(d.Covariance), len(cov))
+	}
+
+	for i := range loc {
+		if loc[i] != d.Location[i] {
+			t.Errorf("location expected %v at position %v, but got %v", loc[i], i, d.Location[i])
+		}
+	}
+	for i := range cov {
+		if cov[i] != d.Covariance[i] {
+			t.Errorf("covariance expected %v at position %v, but got %v", cov[i], i, d.Covariance[i])
+		}
+	}
+}
