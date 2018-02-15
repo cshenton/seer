@@ -57,10 +57,23 @@ func (d *Deterministic) System(period, noise, walk float64) (k *kalman.System) {
 	h := Harmonics(period, maxHarmonic)
 	dim := 2*len(h) + 2
 
-	a := mat.NewDense(1, 1, []float64{noise + walk})
+	aMats := make([]*mat.Dense, len(h)+1)
+	aMats[0] = mat.NewDense(2, 2, []float64{1, 1, 0, 1})
+	for i := 1; i < len(aMats); i++ {
+		angle := 2 * math.Pi / h[i-1]
+		data := []float64{math.Cos(angle), math.Sin(angle), -math.Sin(angle), math.Cos(angle)}
+		aMats[i] = mat.NewDense(2, 2, data)
+	}
+	a := BlockDiag(aMats...)
 
-	b := mat.NewDense(1, 1, []float64{noise + walk})
+	b, _ := Eye(dim)
 
+	cVals := make([]float64, dim)
+	for i := range cVals {
+		if i%2 == 0 {
+			cVals[i] = 1
+		}
+	}
 	c := mat.NewDense(1, 1, []float64{noise + walk})
 
 	qVals := make([]float64, dim)
@@ -75,12 +88,6 @@ func (d *Deterministic) System(period, noise, walk float64) (k *kalman.System) {
 
 	k, _ = kalman.NewSystem(a, b, c, q, r)
 	return k
-	// A: block diag of 1101 and the harmonics
-	// B: (eye dim)
-	// C: 101010 dim
-	// Q: diag (level trend harmonic...)
-	// R: 1x1 filter noise
-	// make system
 }
 
 // Update performs a filter step against the deterministic state.
