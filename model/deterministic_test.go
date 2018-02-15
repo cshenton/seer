@@ -95,6 +95,28 @@ func TestNewDeterministic(t *testing.T) {
 	}
 }
 
+func TestDeterministicState(t *testing.T) {
+	d := model.NewDeterministic(604800)
+
+	k := d.State()
+
+	lx, ly := k.Loc.Dims()
+	if lx != 22 {
+		t.Fatalf("expected location to have %v rows, but it had %v", 22, lx)
+	}
+	if ly != 1 {
+		t.Fatalf("expected location to have %v columns, but it had %v", 1, ly)
+	}
+
+	cx, cy := k.Cov.Dims()
+	if cx != 22 {
+		t.Fatalf("expected covariance to have %v rows, but it had %v", 22, cx)
+	}
+	if cy != 22 {
+		t.Fatalf("expected covariance to have %v columns, but it had %v", 22, cy)
+	}
+}
+
 func TestDeterministicSystem(t *testing.T) {
 	d := model.NewDeterministic(604800)
 

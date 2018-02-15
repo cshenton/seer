@@ -20,6 +20,15 @@ func NewStochastic() (s *Stochastic) {
 	return s
 }
 
+// State returns the kalman filter State.
+func (s *Stochastic) State() (k *kalman.State) {
+	l := mat.NewDense(s.Dim(), 1, s.Location)
+	c := mat.NewDense(s.Dim(), s.Dim(), s.Covariance)
+
+	k, _ = kalman.NewState(l, c)
+	return k
+}
+
 // System generates process and observation matrices for this linear system.
 func (s *Stochastic) System(noise, walk float64) (k *kalman.System) {
 	a := mat.NewDense(1, 1, []float64{1})

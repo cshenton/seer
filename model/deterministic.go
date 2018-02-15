@@ -52,6 +52,15 @@ func NewDeterministic(period float64) (d *Deterministic) {
 	return d
 }
 
+// State returns the kalman filter State.
+func (d *Deterministic) State() (k *kalman.State) {
+	l := mat.NewDense(d.Dim(), 1, d.Location)
+	c := mat.NewDense(d.Dim(), d.Dim(), d.Covariance)
+
+	k, _ = kalman.NewState(l, c)
+	return k
+}
+
 // System generates process and observation matrices for this linear system.
 func (d *Deterministic) System(noise, walk, period float64) (k *kalman.System) {
 	h := Harmonics(period, maxHarmonic)
