@@ -94,3 +94,49 @@ func TestNewDeterministic(t *testing.T) {
 		}
 	}
 }
+
+func TestDeterministicSystem(t *testing.T) {
+	d := model.NewDeterministic(604800)
+
+	s := d.System(100, 10, 604800)
+
+	ax, ay := s.A.Dims()
+	if ax != 22 {
+		t.Fatalf("expected A to have %v rows, but it had %v", 22, ax)
+	}
+	if ay != 22 {
+		t.Fatalf("expected A to have %v columns, but it had %v", 22, ay)
+	}
+
+	bx, by := s.B.Dims()
+	if bx != 22 {
+		t.Fatalf("expected B to have %v rows, but it had %v", 22, bx)
+	}
+	if by != 22 {
+		t.Fatalf("expected B to have %v columns, but it had %v", 22, by)
+	}
+
+	cx, cy := s.C.Dims()
+	if cx != 1 {
+		t.Fatalf("expected B to have %v rows, but it had %v", 1, cx)
+	}
+	if cy != 22 {
+		t.Fatalf("expected B to have %v columns, but it had %v", 22, cy)
+	}
+
+	qx, qy := s.Q.Dims()
+	if qx != 22 {
+		t.Fatalf("expected B to have %v rows, but it had %v", 22, qx)
+	}
+	if qy != 22 {
+		t.Fatalf("expected B to have %v columns, but it had %v", 22, qy)
+	}
+
+	rx, ry := s.R.Dims()
+	if rx != 1 {
+		t.Fatalf("expected B to have %v rows, but it had %v", 1, rx)
+	}
+	if ry != 1 {
+		t.Fatalf("expected B to have %v columns, but it had %v", 1, ry)
+	}
+}

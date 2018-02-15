@@ -35,12 +35,15 @@ func (m *Model) Update(v, period float64) {
 	// apply new RCE
 }
 
-func Filter(v, p float64, d *Deterministic, s *Stochastic, r *RCE) {
-	r.Update(v)
-	noise := r.Noise()
-	walk := r.Walk()
-	resid := d.Update(noise, walk, p, v)
-	s.Update(noise, walk, resid)
-}
+// func Filter(v, p float64, d *Deterministic, s *Stochastic, r *RCE) {
+// 	// Update d, get resid
+// 	// update r on resid
+// 	// update s with updated r
+// 	r.Update(v)
+// 	noise := r.Noise()
+// 	walk := r.Walk()
+// 	resid := d.Update(noise, walk, p, v)
+// 	s.Update(noise, walk, resid)
+// }
 
 // Forecast passes forward through the filter and returns

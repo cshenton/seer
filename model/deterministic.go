@@ -53,7 +53,7 @@ func NewDeterministic(period float64) (d *Deterministic) {
 }
 
 // System generates process and observation matrices for this linear system.
-func (d *Deterministic) System(period, noise, walk float64) (k *kalman.System) {
+func (d *Deterministic) System(noise, walk, period float64) (k *kalman.System) {
 	h := Harmonics(period, maxHarmonic)
 	dim := 2*len(h) + 2
 
@@ -74,7 +74,7 @@ func (d *Deterministic) System(period, noise, walk float64) (k *kalman.System) {
 			cVals[i] = 1
 		}
 	}
-	c := mat.NewDense(1, 1, []float64{noise + walk})
+	c := mat.NewDense(1, 22, cVals)
 
 	qVals := make([]float64, dim)
 	qVals[0] = levelVar
@@ -82,7 +82,7 @@ func (d *Deterministic) System(period, noise, walk float64) (k *kalman.System) {
 	for i := 2; i < len(qVals); i++ {
 		qVals[i] = harmonicVar
 	}
-	q := mat.NewDense(dim, dim, Diag([]float64{}))
+	q := mat.NewDense(dim, dim, Diag(qVals))
 
 	r := mat.NewDense(1, 1, []float64{noise + walk})
 
@@ -92,7 +92,8 @@ func (d *Deterministic) System(period, noise, walk float64) (k *kalman.System) {
 
 // Update performs a filter step against the deterministic state.
 func (d *Deterministic) Update(noise, walk, period, val float64) float64 {
-	// Get System from period, noise param
+	// Get kalman.System from period, noise param
+	// Make kalman.State from mv
 	// Filter and get residual
 	// update state
 	// return residual
@@ -100,7 +101,3 @@ func (d *Deterministic) Update(noise, walk, period, val float64) float64 {
 	// p, pc, o, oc := s.Filters(noise, walk)
 	return 1.0
 }
-
-// method for generating process, proc cov, obs, obs cov matrices
-
-// method for updating deterministic, returning residual
