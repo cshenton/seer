@@ -2,6 +2,7 @@ package model
 
 import (
 	"github.com/chulabs/seer/dist/mv"
+	"github.com/chulabs/seer/kalman"
 	"gonum.org/v1/gonum/mat"
 )
 
@@ -19,13 +20,16 @@ func NewStochastic() (s *Stochastic) {
 	return s
 }
 
-// Filters generates process and observation matrices for this linear system.
-func (s *Stochastic) Filters(noise, walk float64) (p, pc, o, oc *mat.Dense) {
-	p = mat.NewDense(1, 1, []float64{1})
-	pc = mat.NewDense(1, 1, []float64{walk})
-	o = mat.NewDense(1, 1, []float64{1})
-	oc = mat.NewDense(1, 1, []float64{noise})
-	return p, pc, o, oc
+// System generates process and observation matrices for this linear system.
+func (s *Stochastic) System(noise, walk float64) (k *kalman.System) {
+	a := mat.NewDense(1, 1, []float64{1})
+	b := mat.NewDense(1, 1, []float64{1})
+	c := mat.NewDense(1, 1, []float64{1})
+	q := mat.NewDense(1, 1, []float64{walk})
+	r := mat.NewDense(1, 1, []float64{noise})
+
+	k, _ = kalman.NewSystem(a, b, c, q, r)
+	return k
 }
 
 // Update performs a filter step against the stochastic state.

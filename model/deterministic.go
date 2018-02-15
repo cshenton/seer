@@ -4,6 +4,7 @@ import (
 	"math"
 
 	"github.com/chulabs/seer/dist/mv"
+	"github.com/chulabs/seer/kalman"
 	"gonum.org/v1/gonum/mat"
 )
 
@@ -30,15 +31,6 @@ func Harmonics(min, max float64) []float64 {
 	return harmonics
 }
 
-// Diag returns the corresponding diagonal square matrix values given diag values.
-func Diag(v []float64) (d []float64) {
-	d = make([]float64, len(v)*len(v))
-	for i := range v {
-		d[i*(1+len(v))] = v[i]
-	}
-	return d
-}
-
 // Deterministic is the type against which we apply deterministic model updates.
 type Deterministic struct {
 	*mv.Normal
@@ -60,11 +52,35 @@ func NewDeterministic(period float64) (d *Deterministic) {
 	return d
 }
 
-// Filters generates process and observation matrices for this linear system.
-func (d *Deterministic) Filters(period float64) (p, pc, o, oc *mat.Dense) {
-	// make deterministic system from period, noise param
-	// return
-	return
+// System generates process and observation matrices for this linear system.
+func (d *Deterministic) System(period, noise, walk float64) (k *kalman.System) {
+	h := Harmonics(period, maxHarmonic)
+	dim := 2*len(h) + 2
+
+	a := mat.NewDense(1, 1, []float64{noise + walk})
+
+	b := mat.NewDense(1, 1, []float64{noise + walk})
+
+	c := mat.NewDense(1, 1, []float64{noise + walk})
+
+	qVals := make([]float64, dim)
+	qVals[0] = levelVar
+	qVals[1] = trendVar
+	for i := 2; i < len(qVals); i++ {
+		qVals[i] = harmonicVar
+	}
+	q := mat.NewDense(dim, dim, Diag([]float64{}))
+
+	r := mat.NewDense(1, 1, []float64{noise + walk})
+
+	k, _ = kalman.NewSystem(a, b, c, q, r)
+	return k
+	// A: block diag of 1101 and the harmonics
+	// B: (eye dim)
+	// C: 101010 dim
+	// Q: diag (level trend harmonic...)
+	// R: 1x1 filter noise
+	// make system
 }
 
 // Update performs a filter step against the deterministic state.

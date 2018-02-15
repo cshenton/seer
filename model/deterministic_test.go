@@ -68,31 +68,6 @@ func TestHarmonics(t *testing.T) {
 	}
 }
 
-func TestDiag(t *testing.T) {
-	tt := []struct {
-		name string
-		v    []float64
-		d    []float64
-	}{
-		{"1x1", []float64{1}, []float64{1}},
-		{"2x2", []float64{2, 1}, []float64{2, 0, 0, 1}},
-		{"3x3", []float64{3, 2, 1}, []float64{3, 0, 0, 0, 2, 0, 0, 0, 1}},
-	}
-	for _, tc := range tt {
-		t.Run(tc.name, func(t *testing.T) {
-			d := model.Diag(tc.v)
-			if len(d) != len(tc.d) {
-				t.Fatalf("expected result length %v, got %v", len(tc.d), len(d))
-			}
-			for i := range d {
-				if d[i] != tc.d[i] {
-					t.Errorf("mismatch at %v, expected %v, got %v", i, tc.d[i], d[i])
-				}
-			}
-		})
-	}
-}
-
 func TestNewDeterministic(t *testing.T) {
 	loc := []float64{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 	cov := model.Diag([]float64{

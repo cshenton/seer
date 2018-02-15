@@ -1,6 +1,8 @@
-package kalman
+package model
 
 import (
+	"fmt"
+
 	"gonum.org/v1/gonum/mat"
 )
 
@@ -46,4 +48,40 @@ func BlockDiag(mats ...*mat.Dense) (b *mat.Dense) {
 	}
 	b = mat.NewDense(rowTotal, colTotal, data)
 	return b
+}
+
+// DenseValues extracts the row-major data from the provided dense matrix.
+func DenseValues(d *mat.Dense) (data []float64) {
+	nRows, _ := d.Dims()
+	for i := 0; i < nRows; i++ {
+		rowData := d.RawRowView(i)
+		data = append(data, rowData...)
+	}
+	return data
+}
+
+// Diag returns the corresponding diagonal square matrix values given diag values.
+func Diag(v []float64) (d []float64) {
+	d = make([]float64, len(v)*len(v))
+	for i := range v {
+		d[i*(1+len(v))] = v[i]
+	}
+	return d
+}
+
+// Eye returns the dimension r identity matrix.
+func Eye(r int) (m *mat.Dense, err error) {
+	if r < 1 {
+		err = fmt.Errorf("r must be 1 or greater, but was %v", r)
+		return m, err
+	}
+
+	data := make([]float64, r*r)
+	for i := range data {
+		if i%(r+1) == 0 {
+			data[i] = 1
+		}
+	}
+	m = mat.NewDense(r, r, data)
+	return m, nil
 }
