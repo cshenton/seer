@@ -64,3 +64,21 @@ func TestStochasticUpdate(t *testing.T) {
 		t.Error("location appears not to be updated")
 	}
 }
+
+func TestStochasticForecast(t *testing.T) {
+	noise := 100.0
+	walk := 10.0
+	n := 100
+
+	s := model.NewStochastic()
+	err := s.Update(100, 10, 1)
+	if err != nil {
+		t.Fatal("unexpected error in Update:", err)
+	}
+
+	f := s.Forecast(noise, walk, n)
+
+	if len(f) != n {
+		t.Errorf("expected length %v, but it was %v", n, len(f))
+	}
+}

@@ -180,3 +180,20 @@ func TestDeterministicUpdate(t *testing.T) {
 		t.Error("location appears not to be updated")
 	}
 }
+
+func TestDeterministicForecast(t *testing.T) {
+	period := 604800.0
+	n := 100
+
+	d := model.NewDeterministic(period)
+	_, err := d.Update(100, 10, period, 1)
+	if err != nil {
+		t.Fatal("unexpected error in Update:", err)
+	}
+
+	f := d.Forecast(period, n)
+
+	if len(f) != n {
+		t.Errorf("expected length %v, but it was %v", n, len(f))
+	}
+}

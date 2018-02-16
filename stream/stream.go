@@ -66,9 +66,21 @@ type Interval struct {
 }
 
 // Forecast forecasts against the model and transforms the result to the appropriate domain.
-func (s *Stream) Forecast(n int, p []float64) (t []time.Time, v []float64, i []*Interval) {
-	_ = s.Model.Forecast(s.Config.Period, n)
-	// transform f to appropriate distribution
-	// generate confidence intervals (which depends on a common dist quantiler interface)
+func (s *Stream) Forecast(n int, probs []float64) (t []time.Time, v []float64, i []*Interval) {
+	f := s.Model.Forecast(s.Config.Period, n)
+
+	switch s.Config.Domain {
+	case Continuous:
+		fmt.Println(f)
+	case ContinuousRight:
+		fmt.Println(f)
+	case ContinuousInterval:
+		fmt.Println(f)
+	case DiscreteRight:
+		fmt.Println(f)
+	case DiscreteInterval:
+		fmt.Println(f)
+	}
+
 	return
 }
