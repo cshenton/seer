@@ -99,6 +99,15 @@ func (d *Deterministic) System(noise, walk, period float64) (k *kalman.System) {
 	return k
 }
 
+// Kalman returns a kalman.Kalman created from the deterministic state.
+func (d *Deterministic) Kalman(noise, walk, period float64) (k *kalman.Kalman) {
+	st := d.State()
+	sys := d.System(noise, walk, period)
+
+	k, _ = kalman.New(st, sys)
+	return k
+}
+
 // Update performs a filter step against the deterministic state.
 func (d *Deterministic) Update(noise, walk, period, val float64) float64 {
 	// Get kalman.System from period, noise param

@@ -30,3 +30,27 @@ func TestNewState(t *testing.T) {
 		})
 	}
 }
+
+func TestStateDim(t *testing.T) {
+	tt := []struct {
+		name string
+		loc  *mat.Dense
+		cov  *mat.Dense
+		dim  int
+	}{
+		{"Dim 1", mat.NewDense(1, 1, []float64{0}), mat.NewDense(1, 1, []float64{1}), 1},
+		{"Dim 2", mat.NewDense(2, 1, []float64{0, 0}), mat.NewDense(2, 2, []float64{1, 0, 0, 1}), 2},
+	}
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			s, err := kalman.NewState(tc.loc, tc.cov)
+			if err != nil {
+				t.Fatal("Failed to construct state")
+			}
+			d := s.Dim()
+			if tc.dim != d {
+				t.Errorf("Expected Dim to be %v, but it was %v", tc.dim, d)
+			}
+		})
+	}
+}

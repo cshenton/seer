@@ -33,3 +33,9 @@ func NewState(loc, cov *mat.Dense) (s *State, err error) {
 	s = &State{loc, cov}
 	return s, nil
 }
+
+// Dim returns the integer dimension of the state.
+func (s *State) Dim() (d int) {
+	d, _ = s.Cov.Dims()
+	return d
+}

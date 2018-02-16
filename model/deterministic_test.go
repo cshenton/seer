@@ -162,3 +162,13 @@ func TestDeterministicSystem(t *testing.T) {
 		t.Fatalf("expected B to have %v columns, but it had %v", 1, ry)
 	}
 }
+
+func TestDeterministicKalman(t *testing.T) {
+	d := model.NewDeterministic(604800)
+
+	k := d.Kalman(100, 10, 604800)
+
+	if k.State.Dim() != 22 {
+		t.Errorf("expected state dim of %v, but it was %v", 22, k.State.Dim())
+	}
+}
