@@ -84,7 +84,7 @@ func (d *Deterministic) System(noise, walk, period float64) (k *kalman.System) {
 			cVals[i] = 1
 		}
 	}
-	c := mat.NewDense(1, 22, cVals)
+	c := mat.NewDense(1, dim, cVals)
 
 	qVals := make([]float64, dim)
 	qVals[0] = levelVar

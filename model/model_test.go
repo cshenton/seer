@@ -19,3 +19,21 @@ func TestNew(t *testing.T) {
 		t.Errorf("expected initial theta scale of %v, but got %v", 180, m.RCE.Theta.Scale)
 	}
 }
+
+func TestModelUpdate(t *testing.T) {
+	m := model.New(604800)
+
+	m.Update(604800, 1.0)
+
+	if m.Deterministic.Location[0] == 0 {
+		t.Error("deterministic not updated")
+	}
+
+	if m.Stochastic.Location[0] == 0 {
+		t.Error("stochastic not updated")
+	}
+
+	if m.RCE.History[0] == 0 {
+		t.Error("RCE not updated")
+	}
+}

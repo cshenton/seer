@@ -2,14 +2,12 @@ package model
 
 import (
 	"math"
-	"time"
 
 	"github.com/chulabs/seer/dist/uv"
 )
 
 // Model stores dynamic state about a stream.
 type Model struct {
-	Time          time.Time
 	Deterministic *Deterministic
 	Stochastic    *Stochastic
 	RCE           *RCE
@@ -30,9 +28,6 @@ func (m *Model) Update(period, val float64) {
 	resid, _ := m.Deterministic.Update(m.RCE.Noise(), m.RCE.Walk(), period, val)
 	m.RCE.Update(resid)
 	m.Stochastic.Update(m.RCE.Noise(), m.RCE.Walk(), resid)
-
-	// !!
-	// Increment time by period
 }
 
 // Forecast returns a slice of Normally distributed predictions.
