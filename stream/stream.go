@@ -1,6 +1,7 @@
 package stream
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/chulabs/seer/model"
@@ -10,6 +11,7 @@ import (
 type Stream struct {
 	Config *Config
 	Model  *model.Model
+	Time   time.Time
 }
 
 // New constructs a stream given the required data.
@@ -25,11 +27,35 @@ func New(name string, period, min, max float64, domain int) (s *Stream, err erro
 	return s, nil
 }
 
-// Update updates the provided sequence of values against the stream model.
-func (s *Stream) Update(vals []float64) {
+// Update updates the provided sequence of values against the stream model. It
+// returns an error if the times are not in sequence, or if there are an
+// incorrect number of corresponding values.
+func (s *Stream) Update(vals []float64, times []time.Time) (err error) {
+	if len(vals) != len(times) {
+		err = fmt.Errorf("vals, times should be equal length, but were %v and %v", len(vals), len(times))
+		return err
+	}
+
+	var t time.Time
+	if s.Time.IsZero() {
+		t = times[0]
+	} else {
+		t = s.Time.Add(time.Duration(s.Config.Period * 1e9))
+	}
+
+	for i := range times {
+		if times[i] != t {
+			err = fmt.Errorf("expected time %v at position %v, but got %v", t, i, times[i])
+			return err
+		}
+		t = t.Add(time.Duration(s.Config.Period * 1e9))
+	}
+
 	for _, v := range vals {
 		s.Model.Update(s.Config.Period, v)
 	}
+	s.Time = times[len(times)-1]
+	return nil
 }
 
 // Interval is a forecast confidence interval.

@@ -50,3 +50,17 @@ func TestStochasticSystem(t *testing.T) {
 		t.Errorf("expected observation covariance of %v, but it was %v", 100, k.R.At(0, 0))
 	}
 }
+
+func TestStochasticUpdate(t *testing.T) {
+	s := model.NewStochastic()
+
+	err := s.Update(100, 10, 1)
+
+	if err != nil {
+		t.Fatal("unexpected error during Update:", err)
+	}
+
+	if s.Location[0] == 0 {
+		t.Error("location appears not to be updated")
+	}
+}

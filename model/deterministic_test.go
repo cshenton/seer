@@ -162,3 +162,21 @@ func TestDeterministicSystem(t *testing.T) {
 		t.Fatalf("expected B to have %v columns, but it had %v", 1, ry)
 	}
 }
+
+func TestDeterministicUpdate(t *testing.T) {
+	d := model.NewDeterministic(604800)
+
+	resid, err := d.Update(100, 10, 604800, 1)
+
+	if err != nil {
+		t.Fatal("unexpected error during Update:", err)
+	}
+
+	if resid == 0 {
+		t.Error("residual is zero")
+	}
+
+	if d.Location[0] == 0 {
+		t.Error("location appears not to be updated")
+	}
+}

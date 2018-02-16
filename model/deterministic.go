@@ -84,7 +84,7 @@ func (d *Deterministic) System(noise, walk, period float64) (k *kalman.System) {
 			cVals[i] = 1
 		}
 	}
-	c := mat.NewDense(1, 22, cVals)
+	c := mat.NewDense(1, dim, cVals)
 
 	qVals := make([]float64, dim)
 	qVals[0] = levelVar
@@ -105,19 +105,11 @@ func (d *Deterministic) Update(noise, walk, period, val float64) (resid float64,
 	st := d.State()
 	sy := d.System(noise, walk, period)
 
-	statePred, err := kalman.Predict(st, sy)
-	if err != nil {
-		return resid, err
-	}
-	_, resid, err = kalman.Update(statePred, sy, val)
-	if err != nil {
-		return resid, err
-	}
+	statePred, _ := kalman.Predict(st, sy)
+	newState, resid, _ := kalman.Update(statePred, sy, val)
 
-	// !!
-	// Update d.Location, d.Covariance
-	// !!
-
+	d.Location = DenseValues(newState.Loc)
+	d.Covariance = DenseValues(newState.Cov)
 	return resid, nil
 }
 
