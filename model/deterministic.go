@@ -115,5 +115,18 @@ func (d *Deterministic) Update(noise, walk, period, val float64) (resid float64,
 
 // Forecast returns a forecasted slice of normal RVs for this deterministic component.
 func (d *Deterministic) Forecast(period float64, n int) (f []*uv.Normal) {
-	return
+	f = make([]*uv.Normal, n)
+
+	st := d.State()
+	sy := d.System(0, 0, period)
+
+	for i := 0; i < n; i++ {
+		st, _ = kalman.Predict(st, sy)
+		ob, _ := kalman.Observe(st, sy)
+		f[i] = &uv.Normal{
+			Location: DenseValues(ob.Loc)[0],
+			Scale:    math.Sqrt(DenseValues(ob.Cov)[0]),
+		}
+	}
+	return f
 }

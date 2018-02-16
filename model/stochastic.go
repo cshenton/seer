@@ -1,6 +1,8 @@
 package model
 
 import (
+	"math"
+
 	"github.com/chulabs/seer/dist/mv"
 	"github.com/chulabs/seer/dist/uv"
 	"github.com/chulabs/seer/kalman"
@@ -57,5 +59,18 @@ func (s *Stochastic) Update(noise, walk, val float64) (err error) {
 
 // Forecast returns a forecasted slice of normal RVs for this stochastic component.
 func (s *Stochastic) Forecast(noise, walk float64, n int) (f []*uv.Normal) {
-	return
+	f = make([]*uv.Normal, n)
+
+	st := s.State()
+	sy := s.System(noise, walk)
+
+	for i := 0; i < n; i++ {
+		st, _ = kalman.Predict(st, sy)
+		ob, _ := kalman.Observe(st, sy)
+		f[i] = &uv.Normal{
+			Location: DenseValues(ob.Loc)[0],
+			Scale:    math.Sqrt(DenseValues(ob.Cov)[0]),
+		}
+	}
+	return f
 }

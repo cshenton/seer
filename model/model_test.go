@@ -37,3 +37,16 @@ func TestModelUpdate(t *testing.T) {
 		t.Error("RCE not updated")
 	}
 }
+
+func TestModelForecast(t *testing.T) {
+	period := 604800.0
+	n := 150
+
+	m := model.New(period)
+	m.Update(period, 1)
+	f := m.Forecast(period, n)
+
+	if len(f) != n {
+		t.Errorf("expected length %v, but it was %v", n, len(f))
+	}
+}

@@ -34,15 +34,15 @@ func (m *Model) Update(period, val float64) {
 func (m *Model) Forecast(period float64, n int) (f []*uv.Normal) {
 	f = make([]*uv.Normal, n)
 
-	det := m.Deterministic.Forecast(period, n)
-	stoch := m.Stochastic.Forecast(m.RCE.Noise(), m.RCE.Walk(), n)
+	d := m.Deterministic.Forecast(period, n)
+	s := m.Stochastic.Forecast(m.RCE.Noise(), m.RCE.Walk(), n)
 
 	for i := range f {
-		d := &uv.Normal{
-			Location: det[i].Location + stoch[i].Location,
-			Scale:    math.Sqrt(math.Pow(det[i].Scale, 2) + math.Pow(stoch[i].Scale, 2)),
+		dist := &uv.Normal{
+			Location: d[i].Location + s[i].Location,
+			Scale:    math.Sqrt(math.Pow(d[i].Scale, 2) + math.Pow(s[i].Scale, 2)),
 		}
-		f[i] = d
+		f[i] = dist
 	}
 	return f
 }
