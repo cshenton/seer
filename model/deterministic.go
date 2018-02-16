@@ -99,23 +99,30 @@ func (d *Deterministic) System(noise, walk, period float64) (k *kalman.System) {
 	return k
 }
 
-// Kalman returns a kalman.Kalman created from the deterministic state.
-func (d *Deterministic) Kalman(noise, walk, period float64) (k *kalman.Kalman) {
-	st := d.State()
-	sys := d.System(noise, walk, period)
-
-	k, _ = kalman.New(st, sys)
+// FSystem is a zero-noise version of the system for forecasting with deterministic.
+func (d *Deterministic) FSystem(noise, walk, period float64) (k *kalman.System) {
+	k = d.System(noise, walk, period)
+	k.R = mat.NewDense(1, 1, []float64{0})
 	return k
 }
 
 // Update performs a filter step against the deterministic state.
-func (d *Deterministic) Update(noise, walk, period, val float64) float64 {
-	// Get kalman.System from period, noise param
-	// Make kalman.State from mv
-	// Filter and get residual
-	// update state
-	// return residual
+func (d *Deterministic) Update(noise, walk, period, val float64) (resid float64, err error) {
+	st := d.State()
+	sy := d.System(noise, walk, period)
 
-	// p, pc, o, oc := s.Filters(noise, walk)
-	return 1.0
+	statePred, err := kalman.Predict(st, sy)
+	if err != nil {
+		return resid, err
+	}
+	_, resid, err = kalman.Update(statePred, sy, val)
+	if err != nil {
+		return resid, err
+	}
+
+	// !!
+	// Update d.Location, d.Covariance
+	// !!
+
+	return resid, nil
 }

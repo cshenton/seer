@@ -1,99 +1,11 @@
 package kalman_test
 
 import (
-	"math"
 	"testing"
 
 	"github.com/chulabs/seer/kalman"
 	"gonum.org/v1/gonum/mat"
 )
-
-func TestNew(t *testing.T) {
-	tt := []struct {
-		name   string
-		a      *mat.Dense
-		b      *mat.Dense
-		c      *mat.Dense
-		q      *mat.Dense
-		r      *mat.Dense
-		loc    *mat.Dense
-		cov    *mat.Dense
-		errNil bool
-	}{
-		{
-			"Dimension mismatch", mat.NewDense(2, 2, []float64{1, 1, 0, 1}), mat.NewDense(2, 2, []float64{1, 0, 0, 1}),
-			mat.NewDense(1, 2, []float64{1, 0}), mat.NewDense(2, 2, []float64{.5, 0, 0, .5}), mat.NewDense(1, 1, []float64{.5}),
-			mat.NewDense(1, 1, []float64{0}), mat.NewDense(1, 1, []float64{1e3}), false,
-		},
-		{
-			"Dimension match", mat.NewDense(2, 2, []float64{1, 1, 0, 1}), mat.NewDense(2, 2, []float64{1, 0, 0, 1}),
-			mat.NewDense(1, 2, []float64{1, 0}), mat.NewDense(2, 2, []float64{.5, 0, 0, .5}), mat.NewDense(1, 1, []float64{.5}),
-			mat.NewDense(2, 1, []float64{0, 0}), mat.NewDense(2, 2, []float64{1e3, 0, 0, 1e5}), true,
-		},
-	}
-	for _, tc := range tt {
-		t.Run(tc.name, func(t *testing.T) {
-			sys, err := kalman.NewSystem(tc.a, tc.b, tc.c, tc.q, tc.r)
-			if err != nil {
-				t.Fatal("failed to create system", err)
-			}
-			st, err := kalman.NewState(tc.loc, tc.cov)
-			if err != nil {
-				t.Fatal("failed to create state", err)
-			}
-			_, err = kalman.New(st, sys)
-			errNil := (err == nil)
-			if tc.errNil != errNil {
-				t.Errorf("expected error == nil to be %v, but it was %v", tc.errNil, errNil)
-			}
-		})
-	}
-}
-
-func TestKalmanFilter(t *testing.T) {
-	tt := []struct {
-		name string
-		a    *mat.Dense
-		b    *mat.Dense
-		c    *mat.Dense
-		q    *mat.Dense
-		r    *mat.Dense
-		loc  *mat.Dense
-		cov  *mat.Dense
-		v    float64
-	}{
-		{
-			"Postive val", mat.NewDense(2, 2, []float64{1, 1, 0, 1}), mat.NewDense(2, 2, []float64{1, 0, 0, 1}),
-			mat.NewDense(1, 2, []float64{1, 0}), mat.NewDense(2, 2, []float64{.5, 0, 0, .5}), mat.NewDense(1, 1, []float64{.5}),
-			mat.NewDense(2, 1, []float64{0, 0}), mat.NewDense(2, 2, []float64{1e3, 0, 0, 1e5}), 2.3,
-		},
-		{
-			"Negative val", mat.NewDense(2, 2, []float64{1, 1, 0, 1}), mat.NewDense(2, 2, []float64{1, 0, 0, 1}),
-			mat.NewDense(1, 2, []float64{1, 0}), mat.NewDense(2, 2, []float64{.5, 0, 0, .5}), mat.NewDense(1, 1, []float64{.5}),
-			mat.NewDense(2, 1, []float64{0, 0}), mat.NewDense(2, 2, []float64{1e3, 0, 0, 1e5}), -10.1,
-		},
-	}
-	for _, tc := range tt {
-		t.Run(tc.name, func(t *testing.T) {
-			sys, err := kalman.NewSystem(tc.a, tc.b, tc.c, tc.q, tc.r)
-			if err != nil {
-				t.Fatal("failed to create system", err)
-			}
-			st, err := kalman.NewState(tc.loc, tc.cov)
-			if err != nil {
-				t.Fatal("failed to create state", err)
-			}
-			k, err := kalman.New(st, sys)
-			if err != nil {
-				t.Fatal("failed to create kalman", err)
-			}
-			resid, err := k.Filter(tc.v)
-			if math.Abs(resid) > math.Abs(tc.v) {
-				t.Error("residual should be smaller than value, but it was great")
-			}
-		})
-	}
-}
 
 func TestPredict(t *testing.T) {
 	tt := []struct {

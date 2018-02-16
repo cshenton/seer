@@ -6,44 +6,6 @@ import (
 	"gonum.org/v1/gonum/mat"
 )
 
-// Kalman defines the set of standard Kalman filter update equations on a
-// linear system. It is an empty struct, rather than a package, so that it
-// has parity with other concrete implementations of filter.Filter that, unlike
-// kalman.Filter, are stateful (for example kalman.FilterRCE).
-type Kalman struct {
-	State  *State
-	System *System
-}
-
-// New creates a filter from the given state, system, and validates that
-// their dimensions match.
-func New(st *State, sys *System) (k *Kalman, err error) {
-	stDim := st.Dim()
-	sysDim, _ := sys.Dims()
-	if stDim != sysDim {
-		err = fmt.Errorf("State dim must match System process dim, but were %v, and %v", stDim, sysDim)
-		return k, err
-	}
-	k = &Kalman{st, sys}
-	return k, nil
-}
-
-// Filter updates the internal state by doing the predict and update steps of
-// the kalman filter. It returns the post-fit residual, and an error if any
-// dimensions inside the filter do not match.
-func (k *Kalman) Filter(v float64) (res float64, err error) {
-	statePred, err := Predict(k.State, k.System)
-	if err != nil {
-		return res, err
-	}
-	stateNew, res, err := Update(statePred, k.System, v)
-	if err != nil {
-		return res, err
-	}
-	k.State = stateNew
-	return res, nil
-}
-
 // Predict predicts the next state distribution given the previous state and
 // linear system equation `x_next = A * x_prev + B * w_prev `.
 func Predict(p *State, m *System) (n *State, err error) {
@@ -87,7 +49,7 @@ func Observe(s *State, m *System) (o *State, err error) {
 	return o, err
 }
 
-// StateObserve foo
+// StateObserve returns the observation distribution
 func StateObserve(s *State, m *System) (o *State, err error) {
 	var loc mat.Dense
 	var cov mat.Dense

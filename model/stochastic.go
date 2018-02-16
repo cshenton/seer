@@ -41,16 +41,23 @@ func (s *Stochastic) System(noise, walk float64) (k *kalman.System) {
 	return k
 }
 
-// Kalman returns a kalman.Kalman created from the stochastic state.
-func (s *Stochastic) Kalman(noise, walk float64) (k *kalman.Kalman) {
-	st := s.State()
-	sys := s.System(noise, walk)
-
-	k, _ = kalman.New(st, sys)
-	return k
-}
-
 // Update performs a filter step against the stochastic state.
-func (s *Stochastic) Update(noise, walk, val float64) {
-	// p, pc, o, oc := s.Filters(noise, walk)
+func (s *Stochastic) Update(noise, walk, val float64) (err error) {
+	st := s.State()
+	sy := s.System(noise, walk)
+
+	statePred, err := kalman.Predict(st, sy)
+	if err != nil {
+		return err
+	}
+	_, _, err = kalman.Update(statePred, sy, val)
+	if err != nil {
+		return err
+	}
+
+	// !!
+	// Update s.Location, s.Covariance
+	// !!
+
+	return nil
 }
