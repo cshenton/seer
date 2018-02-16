@@ -2,6 +2,7 @@ package model
 
 import (
 	"github.com/chulabs/seer/dist/mv"
+	"github.com/chulabs/seer/dist/uv"
 	"github.com/chulabs/seer/kalman"
 	"gonum.org/v1/gonum/mat"
 )
@@ -60,4 +61,9 @@ func (s *Stochastic) Update(noise, walk, val float64) (err error) {
 	// !!
 
 	return nil
+}
+
+// Forecast returns a forecasted slice of normal RVs for this stochastic component.
+func (s *Stochastic) Forecast(noise, walk float64, n int) (f []*uv.Normal) {
+	return
 }

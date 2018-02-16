@@ -4,6 +4,7 @@ import (
 	"math"
 
 	"github.com/chulabs/seer/dist/mv"
+	"github.com/chulabs/seer/dist/uv"
 	"github.com/chulabs/seer/kalman"
 	"gonum.org/v1/gonum/mat"
 )
@@ -99,13 +100,6 @@ func (d *Deterministic) System(noise, walk, period float64) (k *kalman.System) {
 	return k
 }
 
-// FSystem is a zero-noise version of the system for forecasting with deterministic.
-func (d *Deterministic) FSystem(noise, walk, period float64) (k *kalman.System) {
-	k = d.System(noise, walk, period)
-	k.R = mat.NewDense(1, 1, []float64{0})
-	return k
-}
-
 // Update performs a filter step against the deterministic state.
 func (d *Deterministic) Update(noise, walk, period, val float64) (resid float64, err error) {
 	st := d.State()
@@ -125,4 +119,9 @@ func (d *Deterministic) Update(noise, walk, period, val float64) (resid float64,
 	// !!
 
 	return resid, nil
+}
+
+// Forecast returns a forecasted slice of normal RVs for this deterministic component.
+func (d *Deterministic) Forecast(period float64, n int) (f []*uv.Normal) {
+	return
 }
