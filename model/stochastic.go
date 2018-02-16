@@ -51,15 +51,13 @@ func (s *Stochastic) Update(noise, walk, val float64) (err error) {
 	if err != nil {
 		return err
 	}
-	_, _, err = kalman.Update(statePred, sy, val)
+	newState, _, err := kalman.Update(statePred, sy, val)
 	if err != nil {
 		return err
 	}
 
-	// !!
-	// Update s.Location, s.Covariance
-	// !!
-
+	s.Location = DenseValues(newState.Loc)
+	s.Covariance = DenseValues(newState.Cov)
 	return nil
 }
 
