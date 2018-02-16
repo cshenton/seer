@@ -67,10 +67,20 @@ type Interval struct {
 
 // Forecast forecasts against the model and transforms the result to the appropriate domain.
 func (s *Stream) Forecast(n int, probs []float64) (t []time.Time, v []float64, i []*Interval) {
-	// Get slice of uv.Normal from model.Forecast
-	// switch statement
-	// given config.domain, apply transformation
-	// for prob in p
-	// generate interval from transformed distributions
+	f := s.Model.Forecast(s.Config.Period, n)
+
+	switch s.Config.Domain {
+	case Continuous:
+		fmt.Println(f)
+	case ContinuousRight:
+		fmt.Println(f)
+	case ContinuousInterval:
+		fmt.Println(f)
+	case DiscreteRight:
+		fmt.Println(f)
+	case DiscreteInterval:
+		fmt.Println(f)
+	}
+
 	return
 }
