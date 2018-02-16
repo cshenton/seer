@@ -47,14 +47,8 @@ func (s *Stochastic) Update(noise, walk, val float64) (err error) {
 	st := s.State()
 	sy := s.System(noise, walk)
 
-	statePred, err := kalman.Predict(st, sy)
-	if err != nil {
-		return err
-	}
-	newState, _, err := kalman.Update(statePred, sy, val)
-	if err != nil {
-		return err
-	}
+	statePred, _ := kalman.Predict(st, sy)
+	newState, _, _ := kalman.Update(statePred, sy, val)
 
 	s.Location = DenseValues(newState.Loc)
 	s.Covariance = DenseValues(newState.Cov)
