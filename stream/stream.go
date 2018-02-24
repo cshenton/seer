@@ -1,9 +1,11 @@
 package stream
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
+	"github.com/chulabs/seer/dist/uv"
 	"github.com/chulabs/seer/model"
 )
 
@@ -66,27 +68,71 @@ type Interval struct {
 }
 
 // Forecast forecasts against the model and transforms the result to the appropriate domain.
-func (s *Stream) Forecast(n int, probs []float64) (t []time.Time, v []float64, i []*Interval) {
+func (s *Stream) Forecast(n int, probs []float64) (t []time.Time, v []float64, in []*Interval, err error) {
+	if n <= 0 {
+		err = errors.New("n must be greater than 0")
+		return t, v, in, err
+	}
+	for i := range probs {
+		if probs[i] < 0 || probs[i] > 1 {
+			err = fmt.Errorf("probs must be in [0,1], but was %v at position %v", probs[i], i)
+			return t, v, in, err
+		}
+	}
 	f := s.Model.Forecast(s.Config.Period, n)
-	// []*uv.Normal
+	q := make([]uv.Quantiler, n)
 
 	switch s.Config.Domain {
 	case Continuous:
-		fmt.Println(f)
+		for i := range q {
+			q[i] = f[i]
+		}
 	case ContinuousRight:
-		fmt.Println(f)
+		for i := range q {
+			q[i], _ = ToLogNormal(f[i])
+		}
 	case ContinuousInterval:
-		fmt.Println(f)
+		// not implemented
+		for i := range q {
+			q[i] = f[i]
+		}
 	case DiscreteRight:
-		fmt.Println(f)
+		// not implemented
+		for i := range q {
+			q[i], _ = ToLogNormal(f[i])
+		}
 	case DiscreteInterval:
-		fmt.Println(f)
+		// not implemented
+		for i := range q {
+			q[i] = f[i]
+		}
 	}
-	// []uv.Quantiler
 
-	// we want intervals
-	// for p in probs
-	// l, u = uv.ConfidenceInterval(q, p)
+	t = make([]time.Time, n)
+	v = make([]float64, n)
+	in = make([]*Interval, len(probs))
+	for i := range in {
+		in[i] = &Interval{
+			Probability: probs[i],
+			LowerBound:  make([]float64, n),
+			UpperBound:  make([]float64, n),
+		}
+	}
 
-	return
+	prev := s.Time
+	for i := range t {
+		next := prev.Add(s.Config.Duration())
+
+		t[i] = next
+		v[i], _ = q[i].Quantile(0.5)
+
+		for j := range in {
+			l, u, _ := uv.ConfidenceInterval(q[i], in[j].Probability)
+			in[j].LowerBound[i] = l
+			in[j].UpperBound[i] = u
+		}
+
+		prev = next
+	}
+	return t, v, in, nil
 }
