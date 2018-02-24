@@ -1,6 +1,7 @@
 package uv
 
 import (
+	"errors"
 	"math"
 
 	"gonum.org/v1/gonum/mathext"
@@ -10,6 +11,20 @@ import (
 type Normal struct {
 	Location float64
 	Scale    float64
+}
+
+// NewNormal checks the input parameters and returns a Normal constructed
+// using them, if they are valid.
+func NewNormal(location, scale float64) (n *Normal, err error) {
+	if scale <= 0 {
+		err := errors.New("scale must be strictly greater than zero")
+		return nil, err
+	}
+	n = &Normal{
+		Location: location,
+		Scale:    scale,
+	}
+	return n, nil
 }
 
 // Mean returns the first moment of the distribution.
