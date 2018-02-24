@@ -68,6 +68,7 @@ type Interval struct {
 // Forecast forecasts against the model and transforms the result to the appropriate domain.
 func (s *Stream) Forecast(n int, probs []float64) (t []time.Time, v []float64, i []*Interval) {
 	f := s.Model.Forecast(s.Config.Period, n)
+	// []*uv.Normal
 
 	switch s.Config.Domain {
 	case Continuous:
@@ -81,6 +82,11 @@ func (s *Stream) Forecast(n int, probs []float64) (t []time.Time, v []float64, i
 	case DiscreteInterval:
 		fmt.Println(f)
 	}
+	// []uv.Quantiler
+
+	// we want intervals
+	// for p in probs
+	// l, u = uv.ConfidenceInterval(q, p)
 
 	return
 }
