@@ -17,9 +17,6 @@ func ToLogNormal(n *uv.Normal) (ln *uv.LogNormal, err error) {
 	scale := math.Sqrt(math.Log1p(math.Pow(n.Scale/n.Location, 2)))
 	loc := math.Log(n.Location) - math.Log1p(math.Pow(n.Scale/n.Location, 2))/2
 
-	ln = &uv.LogNormal{
-		Location: loc,
-		Scale:    scale,
-	}
+	ln, _ = uv.NewLogNormal(loc, scale)
 	return ln, nil
 }
