@@ -1,6 +1,7 @@
 package stream
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -67,30 +68,52 @@ type Interval struct {
 }
 
 // Forecast forecasts against the model and transforms the result to the appropriate domain.
-func (s *Stream) Forecast(n int, probs []float64) (t []time.Time, v []float64, in []*Interval) {
+func (s *Stream) Forecast(n int, probs []float64) (t []time.Time, v []float64, in []*Interval, err error) {
+	if n <= 0 {
+		err = errors.New("n must be greater than 0")
+		return t, v, in, err
+	}
+	for i := range probs {
+		if probs[i] < 0 || probs[i] > 1 {
+			err = fmt.Errorf("probs must be in [0,1], but was %v at position %v", probs[i], i)
+			return t, v, in, err
+		}
+	}
 	f := s.Model.Forecast(s.Config.Period, n)
 	q := make([]uv.Quantiler, n)
 
 	switch s.Config.Domain {
 	case Continuous:
-		q = nil
+		for i := range q {
+			q[i] = f[i]
+		}
 	case ContinuousRight:
-		q = nil
+		for i := range q {
+			q[i], _ = ToLogNormal(f[i])
+		}
 	case ContinuousInterval:
-		q = nil
+		for i := range q {
+			q[i] = f[i]
+		}
 	case DiscreteRight:
-		q = nil
+		for i := range q {
+			q[i], _ = ToLogNormal(f[i])
+		}
 	case DiscreteInterval:
-		q = nil
+		for i := range q {
+			q[i] = f[i]
+		}
 	}
 
 	t = make([]time.Time, n)
 	v = make([]float64, n)
 	in = make([]*Interval, len(probs))
 	for i := range in {
-		in[i].Probability = probs[i]
-		in[i].LowerBound = make([]float64, n)
-		in[i].UpperBound = make([]float64, n)
+		in[i] = &Interval{
+			Probability: probs[i],
+			LowerBound:  make([]float64, n),
+			UpperBound:  make([]float64, n),
+		}
 	}
 
 	prev := s.Time
@@ -108,5 +131,5 @@ func (s *Stream) Forecast(n int, probs []float64) (t []time.Time, v []float64, i
 
 		prev = next
 	}
-	return t, v, in
+	return t, v, in, nil
 }
