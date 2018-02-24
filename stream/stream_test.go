@@ -87,18 +87,23 @@ func TestStreamUpdateErrs(t *testing.T) {
 
 func TestStreamForecast(t *testing.T) {
 	tt := []struct {
-		name  string
-		n     int
-		probs []float64
+		name   string
+		n      int
+		probs  []float64
+		domain int
 	}{
-		{"single period, single prob", 1, []float64{0.9}},
-		{"multiple periods, single prob", 10, []float64{0.9}},
-		{"single period, multiple probs", 1, []float64{0.9, 0.99}},
-		{"multiple periods, multiple probs", 10, []float64{0.9, 0.99}},
+		{"single period, single prob", 1, []float64{0.9}, 0},
+		{"multiple periods, single prob", 10, []float64{0.9}, 0},
+		{"single period, multiple probs", 1, []float64{0.9, 0.99}, 0},
+		{"multiple periods, multiple probs", 10, []float64{0.9, 0.99}, 0},
+		{"single period, single prob, right continuous", 1, []float64{0.9}, 1},
+		{"multiple periods, single prob, right continuous", 10, []float64{0.9}, 1},
+		{"single period, multiple probs, right continuous", 1, []float64{0.9, 0.99}, 1},
+		{"multiple periods, multiple probs, right continuous", 10, []float64{0.9, 0.99}, 1},
 	}
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			s, _ := stream.New("stream", 3600, 0, 0, 0)
+			s, _ := stream.New("stream", 3600, 0, 0, tc.domain)
 			s.Update([]float64{1}, []time.Time{time.Now()})
 
 			tm, v, in, err := s.Forecast(tc.n, tc.probs)
