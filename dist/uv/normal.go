@@ -38,6 +38,11 @@ func (n *Normal) Variance() float64 {
 }
 
 // Quantile is the inverse function of the CDF.
-func (n *Normal) Quantile(p float64) float64 {
-	return n.Location + n.Scale*mathext.NormalQuantile(p)
+func (n *Normal) Quantile(p float64) (q float64, err error) {
+	if p < 0 || p > 1 {
+		err := errors.New("probabilities must be between 0 and 1")
+		return q, err
+	}
+	q = n.Location + n.Scale*mathext.NormalQuantile(p)
+	return q, nil
 }

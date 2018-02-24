@@ -1,6 +1,7 @@
 package uv_test
 
 import (
+	"math"
 	"testing"
 
 	"github.com/chulabs/seer/dist/uv"
@@ -51,5 +52,36 @@ func TestNewLogNormalErrs(t *testing.T) {
 				t.Error("expected nil dist but it was", ln)
 			}
 		})
+	}
+}
+
+func TestLogNormalQuantile(t *testing.T) {
+	loc := 0.0
+	scale := 1.0
+
+	ln, err := uv.NewLogNormal(loc, scale)
+	if err != nil {
+		t.Error("unexpected error in NewLogNormal,", err)
+	}
+	q, err := ln.Quantile(0.5)
+	if err != nil {
+		t.Error("unexpected error in Quantile,", err)
+	}
+	if math.Abs(q-math.Exp(loc)) > 1e-8 {
+		t.Errorf("expected median quantile %v, but got %v", math.Exp(loc), q)
+	}
+}
+
+func TestLogNormalQuantileErrs(t *testing.T) {
+	loc := 0.0
+	scale := 1.0
+
+	ln, err := uv.NewLogNormal(loc, scale)
+	if err != nil {
+		t.Error("unexpected error in NewLogNormal,", err)
+	}
+	_, err = ln.Quantile(2)
+	if err == nil {
+		t.Error("expected error, but it was nil")
 	}
 }
