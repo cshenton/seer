@@ -1,19 +1,25 @@
 package stream
 
-import "github.com/chulabs/seer/dist/uv"
+import (
+	"errors"
+	"math"
 
-func ToLogNormal(n *uv.Normal) *uv.LogNormal {
-	return
-}
+	"github.com/chulabs/seer/dist/uv"
+)
 
-func ToNegBinomial(n *uv.Normal) *uv.NegBinomial {
-	return
-}
+// ToLogNormal returns a log normal distribution with the same first and
+// second moments as the input normal distribution.
+func ToLogNormal(n *uv.Normal) (ln *uv.LogNormal, err error) {
+	if n.Location <= 0 {
+		err := errors.New("Must have strictly positive location to transform to log normal")
+		return nil, err
+	}
+	scale := math.Sqrt(math.Log1p(math.Pow(n.Scale/n.Location, 2)))
+	loc := math.Log(n.Location) - math.Log1p(math.Pow(n.Scale/n.Location, 2))/2
 
-func ToBeta(n *uv.Normal) *uv.Beta {
-	return
-}
-
-func ToBinomial(n *uv.Normal) *uv.Binomial {
-	return
+	ln = &uv.LogNormal{
+		Location: loc,
+		Scale:    scale,
+	}
+	return ln, nil
 }
