@@ -61,9 +61,27 @@ func TestLogNormalQuantile(t *testing.T) {
 
 	ln, err := uv.NewLogNormal(loc, scale)
 	if err != nil {
-		t.Error("unexpected error in NewNormal,", err)
+		t.Error("unexpected error in NewLogNormal,", err)
 	}
-	if math.Abs(ln.Quantile(0.5)-math.Exp(loc)) > 1e-8 {
-		t.Errorf("expected median quantile %v, but got %v", math.Exp(loc), ln.Quantile(0.5))
+	q, err := ln.Quantile(0.5)
+	if err != nil {
+		t.Error("unexpected error in Quantile,", err)
+	}
+	if math.Abs(q-math.Exp(loc)) > 1e-8 {
+		t.Errorf("expected median quantile %v, but got %v", math.Exp(loc), q)
+	}
+}
+
+func TestLogNormalQuantileErrs(t *testing.T) {
+	loc := 0.0
+	scale := 1.0
+
+	ln, err := uv.NewLogNormal(loc, scale)
+	if err != nil {
+		t.Error("unexpected error in NewLogNormal,", err)
+	}
+	_, err = ln.Quantile(2)
+	if err == nil {
+		t.Error("expected error, but it was nil")
 	}
 }

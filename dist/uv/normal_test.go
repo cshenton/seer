@@ -28,7 +28,6 @@ func TestNewNormal(t *testing.T) {
 			if n.Scale != tc.scale {
 				t.Errorf("expected Scale %v, but got %v", tc.scale, n.Scale)
 			}
-
 		})
 	}
 }
@@ -88,7 +87,25 @@ func TestNormalQuantile(t *testing.T) {
 	if err != nil {
 		t.Error("unexpected error in NewNormal,", err)
 	}
-	if math.Abs(n.Quantile(0.5)-loc) > 1e-8 {
-		t.Errorf("expected median quantile %v, but got %v", loc, n.Quantile(0.5))
+	q, err := n.Quantile(0.5)
+	if err != nil {
+		t.Error("unexpected error in Quantile,", err)
+	}
+	if math.Abs(q-loc) > 1e-8 {
+		t.Errorf("expected median quantile %v, but got %v", loc, q)
+	}
+}
+
+func TestNormalQuantileErrs(t *testing.T) {
+	loc := 0.0
+	scale := 1.0
+
+	n, err := uv.NewNormal(loc, scale)
+	if err != nil {
+		t.Error("unexpected error in NewNormal,", err)
+	}
+	_, err = n.Quantile(2)
+	if err == nil {
+		t.Error("expected error, but it was nil")
 	}
 }

@@ -28,6 +28,11 @@ func NewLogNormal(location, scale float64) (ln *LogNormal, err error) {
 }
 
 // Quantile is the inverse function of the log normal CDF.
-func (ln *LogNormal) Quantile(p float64) float64 {
-	return math.Exp(ln.Location + ln.Scale*mathext.NormalQuantile(p))
+func (ln *LogNormal) Quantile(p float64) (q float64, err error) {
+	if p < 0 || p > 1 {
+		err := errors.New("probabilities must be between 0 and 1")
+		return q, err
+	}
+	q = math.Exp(ln.Location + ln.Scale*mathext.NormalQuantile(p))
+	return q, nil
 }
