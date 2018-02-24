@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/chulabs/seer/dist/uv"
 	"github.com/chulabs/seer/model"
 )
 
@@ -66,27 +67,46 @@ type Interval struct {
 }
 
 // Forecast forecasts against the model and transforms the result to the appropriate domain.
-func (s *Stream) Forecast(n int, probs []float64) (t []time.Time, v []float64, i []*Interval) {
+func (s *Stream) Forecast(n int, probs []float64) (t []time.Time, v []float64, in []*Interval) {
 	f := s.Model.Forecast(s.Config.Period, n)
-	// []*uv.Normal
+	q := make([]uv.Quantiler, n)
 
 	switch s.Config.Domain {
 	case Continuous:
-		fmt.Println(f)
+		q = nil
 	case ContinuousRight:
-		fmt.Println(f)
+		q = nil
 	case ContinuousInterval:
-		fmt.Println(f)
+		q = nil
 	case DiscreteRight:
-		fmt.Println(f)
+		q = nil
 	case DiscreteInterval:
-		fmt.Println(f)
+		q = nil
 	}
-	// []uv.Quantiler
 
-	// we want intervals
-	// for p in probs
-	// l, u = uv.ConfidenceInterval(q, p)
+	t = make([]time.Time, n)
+	v = make([]float64, n)
+	in = make([]*Interval, len(probs))
+	for i := range in {
+		in[i].Probability = probs[i]
+		in[i].LowerBound = make([]float64, n)
+		in[i].UpperBound = make([]float64, n)
+	}
 
-	return
+	prev := s.Time
+	for i := range t {
+		next := prev.Add(s.Config.Duration())
+
+		t[i] = next
+		v[i], _ = q[i].Quantile(0.5)
+
+		for j := range in {
+			l, u, _ := uv.ConfidenceInterval(q[i], in[j].Probability)
+			in[j].LowerBound[i] = l
+			in[j].UpperBound[i] = u
+		}
+
+		prev = next
+	}
+	return t, v, in
 }

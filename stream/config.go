@@ -1,6 +1,9 @@
 package stream
 
-import "errors"
+import (
+	"errors"
+	"time"
+)
 
 // Domain determines whether data are continuous or discrete.
 type Domain int
@@ -65,4 +68,9 @@ func NewConfig(name string, period, min, max float64, domain int) (c *Config, er
 		Domain: dom,
 	}
 	return c, nil
+}
+
+// Duration constructs a time.Duration from the period.
+func (c *Config) Duration() time.Duration {
+	return time.Duration(c.Period * 1e9)
 }
