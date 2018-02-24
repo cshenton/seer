@@ -1,6 +1,11 @@
 package uv
 
-import "errors"
+import (
+	"errors"
+	"math"
+
+	"gonum.org/v1/gonum/mathext"
+)
 
 // LogNormal is the log normal distribution.
 type LogNormal struct {
@@ -20,4 +25,9 @@ func NewLogNormal(location, scale float64) (ln *LogNormal, err error) {
 		Scale:    scale,
 	}
 	return ln, nil
+}
+
+// Quantile is the inverse function of the log normal CDF.
+func (ln *LogNormal) Quantile(p float64) float64 {
+	return math.Exp(ln.Location + ln.Scale*mathext.NormalQuantile(p))
 }
