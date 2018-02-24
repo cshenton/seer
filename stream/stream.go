@@ -92,14 +92,17 @@ func (s *Stream) Forecast(n int, probs []float64) (t []time.Time, v []float64, i
 			q[i], _ = ToLogNormal(f[i])
 		}
 	case ContinuousInterval:
+		// not implemented
 		for i := range q {
 			q[i] = f[i]
 		}
 	case DiscreteRight:
+		// not implemented
 		for i := range q {
 			q[i], _ = ToLogNormal(f[i])
 		}
 	case DiscreteInterval:
+		// not implemented
 		for i := range q {
 			q[i] = f[i]
 		}
