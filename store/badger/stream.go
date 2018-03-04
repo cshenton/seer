@@ -2,6 +2,14 @@ package badger
 
 import "github.com/chulabs/seer/stream"
 
+// Key for the stream index
+var streamList = "stream_list"
+
+// Key for a particular stream's data
+func streamKey(name string) string {
+	return "stream::" + name
+}
+
 // CreateStream saves the provided stream at name, returns an error if a
 // stream already exists at that address.
 func (b *Store) CreateStream(name string, s *stream.Stream) (err error) {
@@ -52,22 +60,17 @@ func (b *Store) UpdateStream(name string, s *stream.Stream) (err error) {
 	return
 }
 
-// Problem here will be concurrent access on streamlist, which may also present issues
-// for listing
+// OKAY
 
-// Really we want a list of names that we can quickly check for membership in and that
-// we can get ordered segments of (i.e. offset limit).
+// initially let's just do
+// streams stored at stream::<name>
+// full list stored at stream_list
+// For now we assume concurrent creation of streams is not a huge issue
+// So:
+// Creates pull list into memory, check for the name, append the new name
+// Delete pull list into memory, check for the name, delete the existing name
+// Lists pull the full list, grab the relevant names, retrieve those streams.
 
-// Okay we could have a hash like names::stream::foo which is either empty or not, that
-// is quick and satisfies create and update.
+// NOW
 
-// That doesn't fix paging though. For that we need some sorting mechanism. So redis
-// ZRANGE is O(log(N)+M), which means it finds the start within log(N), then pages through
-// a linked list.
-
-// So I guess a zset would be implemented with a hash of members to structs of scores and pointers.
-
-// Then if we add an element, we need to find its adjacent elements, set pointers to them, and update
-// their pointers.
-
-// So in both cases, how do we find an element given a score in log(N)?
+// One missing ingredient: serialising streams.
