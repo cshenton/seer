@@ -21,20 +21,38 @@ import "google/protobuf/timestamp.proto";
 
 package seer;
 
-// The seer service definition
+// The seer service
 service Seer {
-  // Creates a stream
-  rpc CreateStream (CreateStreamRequest) returns (Stream) {}
-  // Gets a stream
-  rpc GetStream (GetStreamRequest) returns (Stream) {}
-  // Updates a stream
-  rpc UpdateStream (UpdateStreamRequest) returns (Stream) {}
-  // Deletes a stream
-  rpc DeleteStream (DeleteStreamRequest) returns (google.protobuf.Empty) {}
-  // Lists streams
-  rpc ListStreams (ListStreamsRequest) returns (ListStreamsResponse) {}
-  // Gets a forecast
-  rpc GetForecast (GetForecastRequest) returns (Forecast) {}
+  rpc CreateStream (CreateStreamRequest) returns (Stream) {
+    option (google.api.http) = {
+      post: "/v1/streams"
+    };
+  }
+  rpc GetStream (GetStreamRequest) returns (Stream) {
+    option (google.api.http) = {
+      get: "/v1/streams/{name=*}"
+    };
+  }
+  rpc UpdateStream (UpdateStreamRequest) returns (Stream) {
+    option (google.api.http) = {
+      put: "/v1/streams/{name=*}"
+    };
+  }
+  rpc DeleteStream (DeleteStreamRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/streams/{name=*}"
+    };
+  }
+  rpc ListStreams (ListStreamsRequest) returns (ListStreamsResponse) {
+    option (google.api.http) = {
+      get: "/v1/streams"
+    };
+  }
+  rpc GetForecast (GetForecastRequest) returns (Forecast) {
+    option (google.api.http) = {
+      get: "/v1/streams/{name=*}/forecast"
+    };
+  }
 }
 
 enum Domain {
@@ -105,6 +123,7 @@ message ListStreamsResponse {
 // The request message containing events to apply to the stream
 message UpdateStreamRequest {
   Event event = 1;
+  string name = 2;
 }
 
 // The request message containing the forecast length
