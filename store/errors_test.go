@@ -40,3 +40,14 @@ func TestNoneFoundError(t *testing.T) {
 		t.Errorf("expected message `%v`, but got `%v`", msg, err.Error())
 	}
 }
+
+func TestCorruptDataError(t *testing.T) {
+	msg := "unable to unmarshal entity of kind stream"
+	err := store.CorruptDataError{
+		Kind: "stream",
+	}
+
+	if err.Error() != msg {
+		t.Errorf("expected message `%v`, but got `%v`", msg, err.Error())
+	}
+}

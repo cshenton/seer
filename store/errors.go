@@ -35,3 +35,13 @@ type NoneFoundError struct {
 func (err *NoneFoundError) Error() string {
 	return fmt.Sprintf("no entities of kind %v were found", err.Kind)
 }
+
+// CorruptDataError is returned when data at a key has invalid schema.
+type CorruptDataError struct {
+	Kind string
+}
+
+// Error message for CorruptDataError, implements error interface.
+func (err *CorruptDataError) Error() string {
+	return fmt.Sprintf("unable to unmarshal entity of kind %v", err.Kind)
+}

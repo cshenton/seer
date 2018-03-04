@@ -1,13 +1,19 @@
 package badger
 
-import "github.com/chulabs/seer/stream"
+import (
+	"log"
+
+	"github.com/chulabs/seer/store"
+	"github.com/chulabs/seer/stream"
+	"github.com/vmihailenco/msgpack"
+)
 
 // Key for the stream index
-var streamList = "stream_list"
+var streamList = []byte("stream_list")
 
 // Key for a particular stream's data
-func streamKey(name string) string {
-	return "stream::" + name
+func streamKey(name string) []byte {
+	return []byte("stream::" + name)
 }
 
 // CreateStream saves the provided stream at name, returns an error if a
@@ -27,12 +33,22 @@ func (b *Store) CreateStream(name string, s *stream.Stream) (err error) {
 // GetStream returns the stream stored at name, or an error if no such
 // stream exists.
 func (b *Store) GetStream(name string) (s *stream.Stream, err error) {
-	// Get stream::name
-	// if not found,
-	// 	return error
-	// deserialize into stream
-	// return stream, nil
-	return
+	tx := b.NewTransaction(false)
+
+	item, err := tx.Get(streamKey(name))
+	if err != nil {
+		return nil, &store.NotFoundError{Kind: "stream", Entity: name}
+	}
+
+	s = &stream.Stream{}
+	err = msgpack.Unmarshal(item.Key(), s)
+	if err != nil {
+		log.Print(string(item.Key()))
+		err = &store.CorruptDataError{Kind: "stream"}
+		return nil, err
+	}
+
+	return s, nil
 }
 
 // DeleteStream deletes the stream stored at name, or returns an error if
