@@ -25,4 +25,6 @@ func New() (b *Store, err error) {
 
 	b = &Store{db}
 	return b, nil
+
+	// Data initialiser? streamlist?
 }
