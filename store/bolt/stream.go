@@ -9,7 +9,7 @@ import (
 	blt "github.com/boltdb/bolt"
 )
 
-// Stream Bucket
+// streamBucket is the key for the stream bucket.
 var streamBucket = []byte("streams")
 
 // CreateStream saves the provided stream at name, returns an error if a
@@ -56,7 +56,19 @@ func (b *Store) GetStream(name string) (s *stream.Stream, err error) {
 // DeleteStream deletes the stream stored at name, or returns an error if
 // no such stream exists.
 func (b *Store) DeleteStream(name string) (err error) {
-	return
+	err = b.Update(func(tx *blt.Tx) error {
+		bk := tx.Bucket(streamBucket)
+
+		val := bk.Get([]byte(name))
+		if val == nil {
+			return &store.NotFoundError{Kind: "stream", Entity: name}
+		}
+
+		err := bk.Delete([]byte(name))
+		return err
+	})
+
+	return err
 }
 
 // ListStreams returns a paged list of streams, or an error if none are found.
