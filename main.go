@@ -1,14 +1,21 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-
-	"github.com/chulabs/seer/stream"
+	"io/ioutil"
+	"os"
+	"testing"
 )
 
+func testPath(t *testing.T) string {
+	path, err := ioutil.TempDir("", "test")
+	if err != nil {
+		t.Fatal("failed to construct test path")
+	}
+	return path
+}
+
 func main() {
-	s, _ := stream.New("myStream", 86400, 0, 0, 1)
-	b, _ := json.Marshal(s)
-	fmt.Println(string(b))
+	f, _ := ioutil.TempFile(os.TempDir(), "bolt_test")
+	fmt.Println(f.Name())
 }
