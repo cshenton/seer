@@ -50,8 +50,9 @@ func (b *Store) CreateStream(name string, s *stream.Stream) (err error) {
 	if err != nil {
 		return err
 	}
-	// if name IS in streamList
-	// 	abort tx, return error
+	if l.Contains(name) {
+		// abort tx, return error
+	}
 
 	sb, _ := msgpack.Marshal(s)
 	tx.Set(streamKey(name), sb)
@@ -124,6 +125,7 @@ func (b *Store) ListStreams(pageNum, pageSize int) (s []*stream.Stream, err erro
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println(l)
 
 	return
 }
@@ -138,8 +140,9 @@ func (b *Store) UpdateStream(name string, s *stream.Stream) (err error) {
 	if err != nil {
 		return err
 	}
-	// if name not in streamList
-	// 	abort tx, return error
+	if !l.Contains(name) {
+		// abort tx, return error
+	}
 
 	sb, _ := msgpack.Marshal(s)
 	tx.Set(streamKey(name), sb)
