@@ -16,7 +16,9 @@ func New(path string) (b *Store, err error) {
 	if err != nil {
 		return nil, err
 	}
-
 	b = &Store{db}
+
+	b.streamInit()
+
 	return b, nil
 }
