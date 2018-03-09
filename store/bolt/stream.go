@@ -1,17 +1,56 @@
 package bolt
 
-import "github.com/chulabs/seer/stream"
+import (
+	"github.com/chulabs/seer/store"
+	"github.com/chulabs/seer/stream"
+	"github.com/vmihailenco/msgpack"
+
+	// Avoid namespace conflicts
+	blt "github.com/boltdb/bolt"
+)
+
+// Stream Bucket
+var streamBucket = []byte("streams")
 
 // CreateStream saves the provided stream at name, returns an error if a
 // stream already exists at that address.
 func (b *Store) CreateStream(name string, s *stream.Stream) (err error) {
-	return
+	err = b.Update(func(tx *blt.Tx) error {
+		bk := tx.Bucket(streamBucket)
+
+		val := bk.Get([]byte(name))
+		if val != nil {
+			return &store.AlreadyExistsError{Kind: "stream", Entity: name}
+		}
+
+		val, _ = msgpack.Marshal(s)
+		err := bk.Put([]byte(name), val)
+		return err
+	})
+
+	return err
 }
 
 // GetStream returns the stream stored at name, or an error if the stream does
 // not exist, or has corrupted data.
 func (b *Store) GetStream(name string) (s *stream.Stream, err error) {
-	return
+	s = &stream.Stream{}
+
+	err = b.View(func(tx *blt.Tx) error {
+		bk := tx.Bucket(streamBucket)
+
+		val := bk.Get([]byte(name))
+		if val == nil {
+			return &store.NotFoundError{Kind: "stream", Entity: name}
+		}
+		err = msgpack.Unmarshal(val, s)
+		return err
+	})
+
+	if err != nil {
+		return nil, err
+	}
+	return s, nil
 }
 
 // DeleteStream deletes the stream stored at name, or returns an error if
