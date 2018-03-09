@@ -73,7 +73,38 @@ func (b *Store) DeleteStream(name string) (err error) {
 
 // ListStreams returns a paged list of streams, or an error if none are found.
 func (b *Store) ListStreams(pageNum, pageSize int) (s []*stream.Stream, err error) {
-	return
+	s = make([]*stream.Stream, pageSize)
+
+	err = b.View(func(tx *blt.Tx) error {
+		bk := tx.Bucket(streamBucket)
+		offset := (pageNum - 1) * pageSize
+
+		c := bk.Cursor()
+		i := 0
+
+		for k, v := c.First(); k != nil; k, v = c.Next() {
+			if i >= offset {
+				j := i - offset
+				st := &stream.Stream{}
+				err = msgpack.Unmarshal(v, st)
+				if err != nil {
+					return err
+				}
+				s[j] = st
+			}
+			i++
+		}
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+	if len(s) == 0 {
+		err = &store.NoneFoundError{Kind: "stream"}
+		return nil, err
+	}
+	return s, nil
 }
 
 // UpdateStream overwrites the stream at name with the provided stream, or
