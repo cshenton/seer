@@ -100,8 +100,6 @@ func (b *Store) UpdateStream(name string, s *stream.Stream) (err error) {
 
 // ListStreams returns a paged list of streams, or an error if none are found.
 func (b *Store) ListStreams(pageNum, pageSize int) (s []*stream.Stream, err error) {
-	s = make([]*stream.Stream, pageSize)
-
 	err = b.View(func(tx *blt.Tx) error {
 		bk := tx.Bucket(streamBucket)
 		offset := (pageNum - 1) * pageSize
@@ -110,13 +108,16 @@ func (b *Store) ListStreams(pageNum, pageSize int) (s []*stream.Stream, err erro
 		i := 0
 
 		for k, v := c.First(); k != nil; k, v = c.Next() {
+			if i >= offset+pageSize {
+				break
+			}
 			if i >= offset {
 				st := &stream.Stream{}
 				err = msgpack.Unmarshal(v, st)
 				if err != nil {
 					return err
 				}
-				s[i-offset] = st
+				s = append(s, st)
 			}
 			i++
 		}
