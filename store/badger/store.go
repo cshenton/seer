@@ -24,7 +24,7 @@ func New() (b *Store, err error) {
 	}
 
 	b = &Store{db}
-	return b, nil
-
 	b.streamInit()
+
+	return b, nil
 }
