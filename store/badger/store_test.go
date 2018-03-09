@@ -7,7 +7,9 @@ import (
 )
 
 func TestNew(t *testing.T) {
-	_, err := badger.New()
+	b, err := badger.New()
+	defer b.Close()
+
 	if err != nil {
 		t.Error("unexpected error in New,", err)
 	}

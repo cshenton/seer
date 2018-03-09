@@ -31,7 +31,7 @@ func getStreamList(tx *bdg.Txn) (l StreamList, err error) {
 		log.Print(string(item.Key()))
 		return nil, &store.CorruptDataError{Kind: "streamList"}
 	}
-	err = msgpack.Unmarshal(lb, l)
+	err = msgpack.Unmarshal(lb, &l)
 	if err != nil {
 		log.Print(lb)
 		return nil, &store.CorruptDataError{Kind: "streamList"}
@@ -47,7 +47,7 @@ func (b *Store) streamInit() {
 
 	_, err := getStreamList(tx)
 	if err != nil {
-		l := StreamList{}
+		l := StreamList{"test"}
 		lb, _ := msgpack.Marshal(l)
 		tx.Set(streamListKey, lb)
 		tx.Commit(nil)
@@ -113,24 +113,23 @@ func (b *Store) DeleteStream(name string) (err error) {
 	tx := b.NewTransaction(true)
 	defer tx.Discard()
 
-	err = tx.Delete(streamKey(name))
-	if err != nil {
-		return &store.NotFoundError{Kind: "stream", Entity: name}
-	}
-
 	l, err := getStreamList(tx)
 	if err != nil {
 		return err
 	}
+	if !l.Contains(name) {
+		return &store.NotFoundError{Kind: "stream", Entity: name}
+	}
+
 	l = l.Remove(name)
 	lb, _ := msgpack.Marshal(l)
 	tx.Set(streamListKey, lb)
 
+	tx.Delete(streamKey(name))
 	err = tx.Commit(nil)
 	if err != nil {
 		// conflict error
 	}
-
 	return nil
 }
 
