@@ -79,5 +79,18 @@ func (b *Store) ListStreams(pageNum, pageSize int) (s []*stream.Stream, err erro
 // UpdateStream overwrites the stream at name with the provided stream, or
 // returns an error if no stream exists at name.
 func (b *Store) UpdateStream(name string, s *stream.Stream) (err error) {
-	return
+	err = b.Update(func(tx *blt.Tx) error {
+		bk := tx.Bucket(streamBucket)
+
+		val := bk.Get([]byte(name))
+		if val == nil {
+			return &store.NotFoundError{Kind: "stream", Entity: name}
+		}
+
+		val, _ = msgpack.Marshal(s)
+		err := bk.Put([]byte(name), val)
+		return err
+	})
+
+	return err
 }
