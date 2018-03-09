@@ -1,10 +1,14 @@
 package main
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+
+	"github.com/chulabs/seer/stream"
+)
 
 func main() {
-	f := []float64{6, 6.1, 6.5, 6.9}
-	for i := range f {
-		fmt.Println(int(f[i]))
-	}
+	s, _ := stream.New("myStream", 86400, 0, 0, 1)
+	b, _ := json.Marshal(s)
+	fmt.Println(string(b))
 }
