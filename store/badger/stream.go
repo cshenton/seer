@@ -20,8 +20,8 @@ func streamKey(name string) []byte {
 	return []byte("stream::" + name)
 }
 
-// getList retrieves the stream list using the provided, active transaction.
-func getList(tx *bdg.Txn) (l StreamList, err error) {
+// getStreamList retrieves the stream list using the provided, active transaction.
+func getStreamList(tx *bdg.Txn) (l StreamList, err error) {
 	item, err := tx.Get(streamListKey)
 	if err != nil {
 		return nil, &store.NoneFoundError{Kind: "streamList"}
@@ -40,22 +40,40 @@ func getList(tx *bdg.Txn) (l StreamList, err error) {
 	return l, nil
 }
 
+// streamInit initialises necessary keys to store streams.
+func (b *Store) streamInit() {
+	tx := b.NewTransaction(true)
+	defer tx.Discard()
+
+	_, err := getStreamList(tx)
+	if err != nil {
+		l := StreamList{}
+		lb, _ := msgpack.Marshal(l)
+		tx.Set(streamListKey, lb)
+		tx.Commit(nil)
+	}
+}
+
 // CreateStream saves the provided stream at name, returns an error if a
 // stream already exists at that address.
 func (b *Store) CreateStream(name string, s *stream.Stream) (err error) {
 	tx := b.NewTransaction(true)
 	defer tx.Discard()
 
-	l, err := getList(tx)
+	l, err := getStreamList(tx)
 	if err != nil {
 		return err
 	}
 	if l.Contains(name) {
-		// abort tx, return error
+		return &store.AlreadyExistsError{Kind: "stream", Entity: name}
 	}
+	l = l.Add(name)
 
 	sb, _ := msgpack.Marshal(s)
 	tx.Set(streamKey(name), sb)
+	lb, _ := msgpack.Marshal(l)
+	tx.Set(streamListKey, lb)
+
 	err = tx.Commit(nil)
 	if err != nil {
 		// conflict error
@@ -100,13 +118,13 @@ func (b *Store) DeleteStream(name string) (err error) {
 		return &store.NotFoundError{Kind: "stream", Entity: name}
 	}
 
-	l, err := getList(tx)
+	l, err := getStreamList(tx)
 	if err != nil {
 		return err
 	}
-	// delete stream from list
-	fmt.Println(l)
-	// delete stream from list
+	l = l.Remove(name)
+	lb, _ := msgpack.Marshal(l)
+	tx.Set(streamListKey, lb)
 
 	err = tx.Commit(nil)
 	if err != nil {
@@ -121,7 +139,7 @@ func (b *Store) ListStreams(pageNum, pageSize int) (s []*stream.Stream, err erro
 	tx := b.NewTransaction(true)
 	defer tx.Discard()
 
-	l, err := getList(tx)
+	l, err := getStreamList(tx)
 	if err != nil {
 		return nil, err
 	}
@@ -136,12 +154,12 @@ func (b *Store) UpdateStream(name string, s *stream.Stream) (err error) {
 	tx := b.NewTransaction(true)
 	defer tx.Discard()
 
-	l, err := getList(tx)
+	l, err := getStreamList(tx)
 	if err != nil {
 		return err
 	}
 	if !l.Contains(name) {
-		// abort tx, return error
+		return &store.NotFoundError{Kind: "stream", Entity: name}
 	}
 
 	sb, _ := msgpack.Marshal(s)
