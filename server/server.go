@@ -3,9 +3,14 @@ package server
 import (
 	"context"
 
+	"github.com/golang/protobuf/ptypes"
+
 	"github.com/chulabs/seer/seer"
 	"github.com/chulabs/seer/store"
+	"github.com/chulabs/seer/stream"
 	"github.com/golang/protobuf/ptypes/empty"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 // Server fulfills the protocol buffer's SeerServer interface.
@@ -22,10 +27,32 @@ func New(path string) (srv *Server) {
 
 // CreateStream creates the provided stream.
 func (srv *Server) CreateStream(c context.Context, in *seer.CreateStreamRequest) (s *seer.Stream, err error) {
-	// stream.New with provided data
-	// srv.db.CreateStream
-	// make and return message
-	return
+	st, err := stream.New(
+		in.Stream.Name,
+		in.Stream.Period,
+		in.Stream.Min,
+		in.Stream.Max,
+		int(in.Stream.Domain),
+	)
+	if err != nil {
+		err = status.Error(codes.InvalidArgument, err.Error())
+		return nil, err
+	}
+	err = srv.db.CreateStream(in.Stream.Name, st)
+	if err != nil {
+		err = status.Error(codes.AlreadyExists, err.Error())
+		return nil, err
+	}
+	t, _ := ptypes.TimestampProto(st.Time)
+	s = &seer.Stream{
+		Name:          st.Config.Name,
+		Period:        st.Config.Period,
+		LastEventTime: t,
+		Domain:        seer.Domain(st.Config.Domain),
+		Min:           st.Config.Min,
+		Max:           st.Config.Max,
+	}
+	return s, nil
 }
 
 // GetStream retrieves and returns the requested stream.
