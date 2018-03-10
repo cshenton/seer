@@ -291,5 +291,73 @@ func TestListStreamsErrs(t *testing.T) {
 }
 
 func TestGetForecast(t *testing.T) {
+	srv := setUp(t)
 
+	tt := []struct {
+		name string
+		n    int
+	}{
+		{"visits", 1},
+		{"usage", 35},
+	}
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			tm, _ := ptypes.TimestampProto(time.Now())
+			uin := &seer.UpdateStreamRequest{
+				Name: tc.name,
+				Event: &seer.Event{
+					Values: []float64{3.15},
+					Times:  []*timestamp.Timestamp{tm},
+				},
+			}
+			_, err := srv.UpdateStream(context.Background(), uin)
+			if err != nil {
+				t.Fatal("unexpected error in UpdateStream:", err)
+			}
+			in := &seer.GetForecastRequest{
+				Name: tc.name,
+				N:    int32(tc.n),
+			}
+			f, err := srv.GetForecast(context.Background(), in)
+			if err != nil {
+				t.Fatal("unexpected error in GetForecast:", err)
+			}
+			if len(f.Intervals) != 3 {
+				t.Errorf("expected %v intervals, but got %v", 3, len(f.Intervals))
+			}
+			if len(f.Times) != tc.n {
+				t.Errorf("expected %v times, but got %v", tc.n, len(f.Times))
+			}
+			if len(f.Values) != tc.n {
+				t.Errorf("expected %v values, but got %v", tc.n, len(f.Values))
+			}
+		})
+	}
+}
+
+func TestGetForecastErrs(t *testing.T) {
+	srv := setUp(t)
+
+	tt := []struct {
+		name string
+		n    int32
+	}{
+		{"notastream", 10},
+		{"sales", -5},
+	}
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			in := &seer.GetForecastRequest{
+				Name: tc.name,
+				N:    tc.n,
+			}
+			f, err := srv.GetForecast(context.Background(), in)
+			if err == nil {
+				t.Error("expected error, but it was nil")
+			}
+			if f != nil {
+				t.Error("expected nil forecast, but got", f)
+			}
+		})
+	}
 }
