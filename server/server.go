@@ -10,6 +10,7 @@ import (
 	"github.com/chulabs/seer/store"
 	"github.com/chulabs/seer/stream"
 	"github.com/golang/protobuf/ptypes/empty"
+	"github.com/golang/protobuf/ptypes/timestamp"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -149,8 +150,34 @@ func (srv *Server) ListStreams(c context.Context, in *seer.ListStreamsRequest) (
 
 // GetForecast generates a forecast from a stream from its current time.
 func (srv *Server) GetForecast(c context.Context, in *seer.GetForecastRequest) (f *seer.Forecast, err error) {
-	// srv.db.GetStream(name)
-	// s.Forecast()
-	// make and return message
-	return
+	st, err := srv.db.GetStream(in.Name)
+	if err != nil {
+		err = status.Error(codes.NotFound, err.Error())
+		return nil, err
+	}
+	times, values, intervals, err := st.Forecast(int(in.N), []float64{0.8, 0.9, 0.95})
+	if err != nil {
+		err = status.Error(codes.InvalidArgument, err.Error())
+		return nil, err
+	}
+
+	protoTimes := make([]*timestamp.Timestamp, len(times))
+	for i := range times {
+		protoTimes[i], _ = ptypes.TimestampProto(times[i])
+	}
+
+	protoIntervals := make([]*seer.Interval, len(intervals))
+	for i := range intervals {
+		protoIntervals[i] = &seer.Interval{
+			Probability: intervals[i].Probability,
+			LowerBound:  intervals[i].LowerBound,
+			UpperBound:  intervals[i].UpperBound,
+		}
+	}
+	f = &seer.Forecast{
+		Times:     protoTimes,
+		Values:    values,
+		Intervals: protoIntervals,
+	}
+	return f, nil
 }
