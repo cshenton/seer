@@ -25,8 +25,13 @@ package seer
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import _ "github.com/golang/protobuf/ptypes/empty"
+import google_protobuf "github.com/golang/protobuf/ptypes/empty"
 import google_protobuf1 "github.com/golang/protobuf/ptypes/timestamp"
+
+import (
+	context "golang.org/x/net/context"
+	grpc "google.golang.org/grpc"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -373,6 +378,243 @@ func init() {
 	proto.RegisterType((*UpdateStreamRequest)(nil), "seer.UpdateStreamRequest")
 	proto.RegisterType((*GetForecastRequest)(nil), "seer.GetForecastRequest")
 	proto.RegisterEnum("seer.Domain", Domain_name, Domain_value)
+}
+
+// Reference imports to suppress errors if they are not otherwise used.
+var _ context.Context
+var _ grpc.ClientConn
+
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the grpc package it is being compiled against.
+const _ = grpc.SupportPackageIsVersion4
+
+// Client API for Seer service
+
+type SeerClient interface {
+	CreateStream(ctx context.Context, in *CreateStreamRequest, opts ...grpc.CallOption) (*Stream, error)
+	GetStream(ctx context.Context, in *GetStreamRequest, opts ...grpc.CallOption) (*Stream, error)
+	UpdateStream(ctx context.Context, in *UpdateStreamRequest, opts ...grpc.CallOption) (*Stream, error)
+	DeleteStream(ctx context.Context, in *DeleteStreamRequest, opts ...grpc.CallOption) (*google_protobuf.Empty, error)
+	ListStreams(ctx context.Context, in *ListStreamsRequest, opts ...grpc.CallOption) (*ListStreamsResponse, error)
+	GetForecast(ctx context.Context, in *GetForecastRequest, opts ...grpc.CallOption) (*Forecast, error)
+}
+
+type seerClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewSeerClient(cc *grpc.ClientConn) SeerClient {
+	return &seerClient{cc}
+}
+
+func (c *seerClient) CreateStream(ctx context.Context, in *CreateStreamRequest, opts ...grpc.CallOption) (*Stream, error) {
+	out := new(Stream)
+	err := grpc.Invoke(ctx, "/seer.Seer/CreateStream", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *seerClient) GetStream(ctx context.Context, in *GetStreamRequest, opts ...grpc.CallOption) (*Stream, error) {
+	out := new(Stream)
+	err := grpc.Invoke(ctx, "/seer.Seer/GetStream", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *seerClient) UpdateStream(ctx context.Context, in *UpdateStreamRequest, opts ...grpc.CallOption) (*Stream, error) {
+	out := new(Stream)
+	err := grpc.Invoke(ctx, "/seer.Seer/UpdateStream", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *seerClient) DeleteStream(ctx context.Context, in *DeleteStreamRequest, opts ...grpc.CallOption) (*google_protobuf.Empty, error) {
+	out := new(google_protobuf.Empty)
+	err := grpc.Invoke(ctx, "/seer.Seer/DeleteStream", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *seerClient) ListStreams(ctx context.Context, in *ListStreamsRequest, opts ...grpc.CallOption) (*ListStreamsResponse, error) {
+	out := new(ListStreamsResponse)
+	err := grpc.Invoke(ctx, "/seer.Seer/ListStreams", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *seerClient) GetForecast(ctx context.Context, in *GetForecastRequest, opts ...grpc.CallOption) (*Forecast, error) {
+	out := new(Forecast)
+	err := grpc.Invoke(ctx, "/seer.Seer/GetForecast", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Server API for Seer service
+
+type SeerServer interface {
+	CreateStream(context.Context, *CreateStreamRequest) (*Stream, error)
+	GetStream(context.Context, *GetStreamRequest) (*Stream, error)
+	UpdateStream(context.Context, *UpdateStreamRequest) (*Stream, error)
+	DeleteStream(context.Context, *DeleteStreamRequest) (*google_protobuf.Empty, error)
+	ListStreams(context.Context, *ListStreamsRequest) (*ListStreamsResponse, error)
+	GetForecast(context.Context, *GetForecastRequest) (*Forecast, error)
+}
+
+func RegisterSeerServer(s *grpc.Server, srv SeerServer) {
+	s.RegisterService(&_Seer_serviceDesc, srv)
+}
+
+func _Seer_CreateStream_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateStreamRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SeerServer).CreateStream(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/seer.Seer/CreateStream",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SeerServer).CreateStream(ctx, req.(*CreateStreamRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Seer_GetStream_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetStreamRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SeerServer).GetStream(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/seer.Seer/GetStream",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SeerServer).GetStream(ctx, req.(*GetStreamRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Seer_UpdateStream_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateStreamRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SeerServer).UpdateStream(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/seer.Seer/UpdateStream",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SeerServer).UpdateStream(ctx, req.(*UpdateStreamRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Seer_DeleteStream_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteStreamRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SeerServer).DeleteStream(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/seer.Seer/DeleteStream",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SeerServer).DeleteStream(ctx, req.(*DeleteStreamRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Seer_ListStreams_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListStreamsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SeerServer).ListStreams(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/seer.Seer/ListStreams",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SeerServer).ListStreams(ctx, req.(*ListStreamsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Seer_GetForecast_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetForecastRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SeerServer).GetForecast(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/seer.Seer/GetForecast",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SeerServer).GetForecast(ctx, req.(*GetForecastRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _Seer_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "seer.Seer",
+	HandlerType: (*SeerServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateStream",
+			Handler:    _Seer_CreateStream_Handler,
+		},
+		{
+			MethodName: "GetStream",
+			Handler:    _Seer_GetStream_Handler,
+		},
+		{
+			MethodName: "UpdateStream",
+			Handler:    _Seer_UpdateStream_Handler,
+		},
+		{
+			MethodName: "DeleteStream",
+			Handler:    _Seer_DeleteStream_Handler,
+		},
+		{
+			MethodName: "ListStreams",
+			Handler:    _Seer_ListStreams_Handler,
+		},
+		{
+			MethodName: "GetForecast",
+			Handler:    _Seer_GetForecast_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "seer.proto",
 }
 
 func init() { proto.RegisterFile("seer.proto", fileDescriptor0) }

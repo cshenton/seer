@@ -1,8 +1,8 @@
 # seer
 Time series forecasting microservice
 
+## Generating server snippets
 ```
-cd seer/
-protoc --go_out=. seer.proto
-cd ..
+# From this directory
+protoc -I seer/ seer/seer.proto --go_out=plugins=grpc:seer
 ```
