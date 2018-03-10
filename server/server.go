@@ -76,6 +76,7 @@ func (srv *Server) GetStream(c context.Context, in *seer.GetStreamRequest) (s *s
 
 // UpdateStream applies an adaptive filter update using the provided events.
 func (srv *Server) UpdateStream(c context.Context, in *seer.UpdateStreamRequest) (s *seer.Stream, err error) {
+	st, err := srv.db.GetStream(in.Name)
 	// srv.db.GetStream(name)
 	// s.Update(events)
 	// srv.db.UpdateStream(name, s)
