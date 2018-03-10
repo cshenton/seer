@@ -3,9 +3,9 @@ package model
 import (
 	"math"
 
-	"github.com/chulabs/seer/dist/mv"
-	"github.com/chulabs/seer/dist/uv"
-	"github.com/chulabs/seer/kalman"
+	"github.com/cshenton/seer/dist/mv"
+	"github.com/cshenton/seer/dist/uv"
+	"github.com/cshenton/seer/kalman"
 	"gonum.org/v1/gonum/mat"
 )
 

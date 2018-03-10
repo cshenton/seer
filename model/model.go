@@ -3,7 +3,7 @@ package model
 import (
 	"math"
 
-	"github.com/chulabs/seer/dist/uv"
+	"github.com/cshenton/seer/dist/uv"
 )
 
 // Model stores dynamic state about a stream.

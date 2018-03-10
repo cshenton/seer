@@ -3,7 +3,7 @@ package model_test
 import (
 	"testing"
 
-	"github.com/chulabs/seer/model"
+	"github.com/cshenton/seer/model"
 )
 
 func TestHistoryUpdate(t *testing.T) {

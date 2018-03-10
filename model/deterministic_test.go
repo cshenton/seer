@@ -3,7 +3,7 @@ package model_test
 import (
 	"testing"
 
-	"github.com/chulabs/seer/model"
+	"github.com/cshenton/seer/model"
 )
 
 // yr, seconds in an average year (365.25 days)
