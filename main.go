@@ -5,8 +5,8 @@ import (
 	"net"
 	"path/filepath"
 
-	"github.com/chulabs/seer/seer"
-	"github.com/chulabs/seer/server"
+	"github.com/cshenton/seer/seer"
+	"github.com/cshenton/seer/server"
 	"google.golang.org/grpc"
 )
 
