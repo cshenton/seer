@@ -123,9 +123,28 @@ func (srv *Server) DeleteStream(c context.Context, in *seer.DeleteStreamRequest)
 
 // ListStreams returns a paged set of streams.
 func (srv *Server) ListStreams(c context.Context, in *seer.ListStreamsRequest) (s *seer.ListStreamsResponse, err error) {
-	// srv.db.ListStreams()
-	// make and return message
-	return
+	lst, err := srv.db.ListStreams(int(in.PageNumber), int(in.PageSize))
+	if err != nil {
+		err = status.Error(codes.NotFound, err.Error())
+		return nil, err
+	}
+	ls := make([]*seer.Stream, len(lst))
+	for i := range lst {
+		st := lst[i]
+		ts, _ := ptypes.TimestampProto(st.Time)
+		ls[i] = &seer.Stream{
+			Name:          st.Config.Name,
+			Period:        st.Config.Period,
+			LastEventTime: ts,
+			Domain:        seer.Domain(st.Config.Domain),
+			Min:           st.Config.Min,
+			Max:           st.Config.Max,
+		}
+	}
+	s = &seer.ListStreamsResponse{
+		Streams: ls,
+	}
+	return s, nil
 }
 
 // GetForecast generates a forecast from a stream from its current time.
