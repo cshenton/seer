@@ -3,7 +3,7 @@ package stream_test
 import (
 	"testing"
 
-	"github.com/chulabs/seer/stream"
+	"github.com/cshenton/seer/stream"
 )
 
 func TestDomainIsInterval(t *testing.T) {

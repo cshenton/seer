@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/chulabs/seer/stream"
+	"github.com/cshenton/seer/stream"
 )
 
 func TestNew(t *testing.T) {
