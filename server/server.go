@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"time"
 
 	"github.com/golang/protobuf/ptypes"
 
@@ -77,11 +78,37 @@ func (srv *Server) GetStream(c context.Context, in *seer.GetStreamRequest) (s *s
 // UpdateStream applies an adaptive filter update using the provided events.
 func (srv *Server) UpdateStream(c context.Context, in *seer.UpdateStreamRequest) (s *seer.Stream, err error) {
 	st, err := srv.db.GetStream(in.Name)
-	// srv.db.GetStream(name)
-	// s.Update(events)
-	// srv.db.UpdateStream(name, s)
-	// make and return message
-	return
+	if err != nil {
+		err = status.Error(codes.NotFound, err.Error())
+		return nil, err
+	}
+	t := make([]time.Time, len(in.Event.Times))
+	for i := range t {
+		ts, _ := ptypes.Timestamp(in.Event.Times[i])
+		t[i] = ts
+	}
+
+	err = st.Update(in.Event.Values, t)
+	if err != nil {
+		err = status.Error(codes.InvalidArgument, err.Error())
+		return nil, err
+	}
+	err = srv.db.UpdateStream(in.Name, st)
+	if err != nil {
+		err = status.Error(codes.NotFound, err.Error())
+		return nil, err
+	}
+
+	ts, _ := ptypes.TimestampProto(st.Time)
+	s = &seer.Stream{
+		Name:          st.Config.Name,
+		Period:        st.Config.Period,
+		LastEventTime: ts,
+		Domain:        seer.Domain(st.Config.Domain),
+		Min:           st.Config.Min,
+		Max:           st.Config.Max,
+	}
+	return s, nil
 }
 
 // DeleteStream removes the requested stream.
