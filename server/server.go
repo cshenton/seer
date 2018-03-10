@@ -7,7 +7,7 @@ import (
 
 // Server fulfills the protocol buffer's SeerServer interface.
 type Server struct {
-	db store.StreamStore
+	DB store.StreamStore
 }
 
 // New creates a database connection and returns a Server.
@@ -16,5 +16,5 @@ func New(path string) (srv *Server, err error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Server{db: db}, nil
+	return &Server{DB: db}, nil
 }

@@ -26,7 +26,7 @@ func (srv *Server) CreateStream(c context.Context, in *seer.CreateStreamRequest)
 		err = status.Error(codes.InvalidArgument, err.Error())
 		return nil, err
 	}
-	err = srv.db.CreateStream(in.Stream.Name, st)
+	err = srv.DB.CreateStream(in.Stream.Name, st)
 	if err != nil {
 		err = status.Error(codes.AlreadyExists, err.Error())
 		return nil, err
@@ -45,7 +45,7 @@ func (srv *Server) CreateStream(c context.Context, in *seer.CreateStreamRequest)
 
 // GetStream retrieves and returns the requested stream.
 func (srv *Server) GetStream(c context.Context, in *seer.GetStreamRequest) (s *seer.Stream, err error) {
-	st, err := srv.db.GetStream(in.Name)
+	st, err := srv.DB.GetStream(in.Name)
 	if err != nil {
 		err = status.Error(codes.NotFound, err.Error())
 		return nil, err
@@ -64,7 +64,7 @@ func (srv *Server) GetStream(c context.Context, in *seer.GetStreamRequest) (s *s
 
 // UpdateStream applies an adaptive filter update using the provided events.
 func (srv *Server) UpdateStream(c context.Context, in *seer.UpdateStreamRequest) (s *seer.Stream, err error) {
-	st, err := srv.db.GetStream(in.Name)
+	st, err := srv.DB.GetStream(in.Name)
 	if err != nil {
 		err = status.Error(codes.NotFound, err.Error())
 		return nil, err
@@ -80,7 +80,7 @@ func (srv *Server) UpdateStream(c context.Context, in *seer.UpdateStreamRequest)
 		err = status.Error(codes.InvalidArgument, err.Error())
 		return nil, err
 	}
-	err = srv.db.UpdateStream(in.Name, st)
+	err = srv.DB.UpdateStream(in.Name, st)
 	if err != nil {
 		err = status.Error(codes.NotFound, err.Error())
 		return nil, err
@@ -100,7 +100,7 @@ func (srv *Server) UpdateStream(c context.Context, in *seer.UpdateStreamRequest)
 
 // DeleteStream removes the requested stream.
 func (srv *Server) DeleteStream(c context.Context, in *seer.DeleteStreamRequest) (em *empty.Empty, err error) {
-	err = srv.db.DeleteStream(in.Name)
+	err = srv.DB.DeleteStream(in.Name)
 	if err != nil {
 		err = status.Error(codes.NotFound, err.Error())
 		return nil, err
@@ -110,7 +110,7 @@ func (srv *Server) DeleteStream(c context.Context, in *seer.DeleteStreamRequest)
 
 // ListStreams returns a paged set of streams.
 func (srv *Server) ListStreams(c context.Context, in *seer.ListStreamsRequest) (s *seer.ListStreamsResponse, err error) {
-	lst, err := srv.db.ListStreams(int(in.PageNumber), int(in.PageSize))
+	lst, err := srv.DB.ListStreams(int(in.PageNumber), int(in.PageSize))
 	if err != nil {
 		err = status.Error(codes.NotFound, err.Error())
 		return nil, err
@@ -136,7 +136,7 @@ func (srv *Server) ListStreams(c context.Context, in *seer.ListStreamsRequest) (
 
 // GetForecast generates a forecast from a stream from its current time.
 func (srv *Server) GetForecast(c context.Context, in *seer.GetForecastRequest) (f *seer.Forecast, err error) {
-	st, err := srv.db.GetStream(in.Name)
+	st, err := srv.DB.GetStream(in.Name)
 	if err != nil {
 		err = status.Error(codes.NotFound, err.Error())
 		return nil, err
