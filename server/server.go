@@ -57,9 +57,21 @@ func (srv *Server) CreateStream(c context.Context, in *seer.CreateStreamRequest)
 
 // GetStream retrieves and returns the requested stream.
 func (srv *Server) GetStream(c context.Context, in *seer.GetStreamRequest) (s *seer.Stream, err error) {
-	// srv.db.GetStream(name)
-	// make and return message
-	return
+	st, err := srv.db.GetStream(in.Name)
+	if err != nil {
+		err = status.Error(codes.NotFound, err.Error())
+		return nil, err
+	}
+	t, _ := ptypes.TimestampProto(st.Time)
+	s = &seer.Stream{
+		Name:          st.Config.Name,
+		Period:        st.Config.Period,
+		LastEventTime: t,
+		Domain:        seer.Domain(st.Config.Domain),
+		Min:           st.Config.Min,
+		Max:           st.Config.Max,
+	}
+	return s, nil
 }
 
 // UpdateStream applies an adaptive filter update using the provided events.
