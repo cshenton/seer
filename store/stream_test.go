@@ -6,9 +6,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/chulabs/seer/store"
-	"github.com/chulabs/seer/store/bolt"
-	"github.com/chulabs/seer/stream"
+	"github.com/cshenton/seer/store"
+	"github.com/cshenton/seer/store/bolt"
+	"github.com/cshenton/seer/stream"
 )
 
 func testPath(t *testing.T) string {

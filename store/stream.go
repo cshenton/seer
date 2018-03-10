@@ -3,7 +3,7 @@ package store
 import (
 	"context"
 
-	"github.com/chulabs/seer/stream"
+	"github.com/cshenton/seer/stream"
 )
 
 // StreamStore defines the methods required to store and retrieve streams.
