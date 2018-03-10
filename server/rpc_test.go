@@ -90,7 +90,40 @@ func TestCreateStreamErrs(t *testing.T) {
 }
 
 func TestGetStream(t *testing.T) {
+	srv := setUp(t)
 
+	tt := []string{"sales", "visits", "usage"}
+
+	for _, name := range tt {
+		t.Run(name, func(t *testing.T) {
+			in := &seer.GetStreamRequest{
+				Name: name,
+			}
+			s, err := srv.GetStream(context.Background(), in)
+			if err != nil {
+				t.Fatal("unexpected error in GetStream:", err)
+			}
+			if s.Name != name {
+				t.Errorf("expected name %v, but got %v", name, s.Name)
+			}
+		})
+	}
+}
+
+func TestGetStreamErrs(t *testing.T) {
+	srv := setUp(t)
+
+	name := "notastream"
+	in := &seer.GetStreamRequest{
+		Name: name,
+	}
+	s, err := srv.GetStream(context.Background(), in)
+	if err == nil {
+		t.Fatal("expected error, but it was nil")
+	}
+	if s != nil {
+		t.Error("expected nil response, but got", s)
+	}
 }
 
 func TestDeleteStream(t *testing.T) {
