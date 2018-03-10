@@ -3,7 +3,7 @@ package uv_test
 import (
 	"testing"
 
-	"github.com/chulabs/seer/dist/uv"
+	"github.com/cshenton/seer/dist/uv"
 )
 
 func TestNewInverseGamma(t *testing.T) {

@@ -3,7 +3,7 @@ package model
 import (
 	"math"
 
-	"github.com/chulabs/seer/dist/uv"
+	"github.com/cshenton/seer/dist/uv"
 )
 
 // History contains the last two observations for this stream, it is required

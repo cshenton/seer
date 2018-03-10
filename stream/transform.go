@@ -4,7 +4,7 @@ import (
 	"errors"
 	"math"
 
-	"github.com/chulabs/seer/dist/uv"
+	"github.com/cshenton/seer/dist/uv"
 )
 
 // ToLogNormal returns a log normal distribution with the same first and

@@ -5,8 +5,8 @@ import (
 	"time"
 
 	blt "github.com/boltdb/bolt"
-	"github.com/chulabs/seer/store/bolt"
-	"github.com/chulabs/seer/stream"
+	"github.com/cshenton/seer/store/bolt"
+	"github.com/cshenton/seer/stream"
 	"github.com/vmihailenco/msgpack"
 )
 

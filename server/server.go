@@ -1,8 +1,8 @@
 package server
 
 import (
-	"github.com/chulabs/seer/store"
-	"github.com/chulabs/seer/store/bolt"
+	"github.com/cshenton/seer/store"
+	"github.com/cshenton/seer/store/bolt"
 )
 
 // Server fulfills the protocol buffer's SeerServer interface.

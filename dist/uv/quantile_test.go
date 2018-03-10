@@ -4,7 +4,7 @@ import (
 	"math"
 	"testing"
 
-	"github.com/chulabs/seer/dist/uv"
+	"github.com/cshenton/seer/dist/uv"
 )
 
 func TestConfidenceInterval(t *testing.T) {

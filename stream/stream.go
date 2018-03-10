@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/chulabs/seer/dist/uv"
-	"github.com/chulabs/seer/model"
+	"github.com/cshenton/seer/dist/uv"
+	"github.com/cshenton/seer/model"
 )
 
 // Stream represents a time series data stream that can learn and forecast.

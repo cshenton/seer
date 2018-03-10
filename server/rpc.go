@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/chulabs/seer/seer"
-	"github.com/chulabs/seer/stream"
+	"github.com/cshenton/seer/seer"
+	"github.com/cshenton/seer/stream"
 	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/golang/protobuf/ptypes/timestamp"

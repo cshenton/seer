@@ -3,7 +3,7 @@ package mv_test
 import (
 	"testing"
 
-	"github.com/chulabs/seer/dist/mv"
+	"github.com/cshenton/seer/dist/mv"
 )
 
 func TestNewNormal(t *testing.T) {

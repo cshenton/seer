@@ -1,8 +1,8 @@
 package bolt
 
 import (
-	"github.com/chulabs/seer/store"
-	"github.com/chulabs/seer/stream"
+	"github.com/cshenton/seer/store"
+	"github.com/cshenton/seer/stream"
 	"github.com/vmihailenco/msgpack"
 
 	// Avoid namespace conflicts

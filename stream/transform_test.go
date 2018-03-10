@@ -4,9 +4,9 @@ import (
 	"math"
 	"testing"
 
-	"github.com/chulabs/seer/stream"
+	"github.com/cshenton/seer/stream"
 
-	"github.com/chulabs/seer/dist/uv"
+	"github.com/cshenton/seer/dist/uv"
 )
 
 func TestToLogNormal(t *testing.T) {

@@ -8,9 +8,9 @@ import (
 	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/timestamp"
 
-	"github.com/chulabs/seer/seer"
-	"github.com/chulabs/seer/server"
-	"github.com/chulabs/seer/stream"
+	"github.com/cshenton/seer/seer"
+	"github.com/cshenton/seer/server"
+	"github.com/cshenton/seer/stream"
 )
 
 func setUp(t *testing.T) (srv *server.Server) {

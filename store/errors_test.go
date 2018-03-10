@@ -3,7 +3,7 @@ package store_test
 import (
 	"testing"
 
-	"github.com/chulabs/seer/store"
+	"github.com/cshenton/seer/store"
 )
 
 func TestNotFoundError(t *testing.T) {
