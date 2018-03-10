@@ -113,9 +113,12 @@ func (srv *Server) UpdateStream(c context.Context, in *seer.UpdateStreamRequest)
 
 // DeleteStream removes the requested stream.
 func (srv *Server) DeleteStream(c context.Context, in *seer.DeleteStreamRequest) (em *empty.Empty, err error) {
-	// srv.db.DeleteStream(name)
-	// make and return message
-	return
+	err = srv.db.DeleteStream(in.Name)
+	if err != nil {
+		err = status.Error(codes.NotFound, err.Error())
+		return nil, err
+	}
+	return &empty.Empty{}, nil
 }
 
 // ListStreams returns a paged set of streams.
