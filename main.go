@@ -1,10 +1,19 @@
 package main
 
 import (
-	"fmt"
+	"log"
+	"path/filepath"
+
+	"github.com/chulabs/seer/server"
 )
 
+var path = filepath.FromSlash("/var/seer")
+
 func main() {
-	li := make([]string, 10)
-	fmt.Println(len(li))
+	srv, err := server.New(path)
+	if err != nil {
+		log.Fatal(path)
+		return
+	}
+
 }
