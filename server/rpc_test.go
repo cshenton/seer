@@ -3,6 +3,10 @@ package server_test
 import (
 	"context"
 	"testing"
+	"time"
+
+	"github.com/golang/protobuf/ptypes"
+	"github.com/golang/protobuf/ptypes/timestamp"
 
 	"github.com/chulabs/seer/seer"
 	"github.com/chulabs/seer/server"
@@ -167,7 +171,79 @@ func TestDeleteStreamErrs(t *testing.T) {
 }
 
 func TestUpdateStream(t *testing.T) {
+	srv := setUp(t)
 
+	tt := []struct {
+		name   string
+		values []float64
+		times  []time.Time
+	}{
+		{"sales", []float64{3.14}, []time.Time{time.Now()}},
+		{
+			"visits", []float64{3.14, 4.43},
+			[]time.Time{
+				time.Date(2016, 1, 1, 0, 0, 0, 0, time.UTC),
+				time.Date(2016, 1, 1, 1, 0, 0, 0, time.UTC),
+			},
+		},
+	}
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			times := make([]*timestamp.Timestamp, len(tc.times))
+			for i := range times {
+				times[i], _ = ptypes.TimestampProto(tc.times[i])
+			}
+			in := &seer.UpdateStreamRequest{
+				Name: tc.name,
+				Event: &seer.Event{
+					Values: tc.values,
+					Times:  times,
+				},
+			}
+			s, err := srv.UpdateStream(context.Background(), in)
+			if err != nil {
+				t.Error("unpexpected error in UpdateStream:", err)
+			}
+			if s.Name != tc.name {
+				t.Errorf("expected name %v, but got %v", tc.name, s.Name)
+			}
+		})
+	}
+}
+
+func TestUpdateStreamErrs(t *testing.T) {
+	srv := setUp(t)
+
+	tt := []struct {
+		name   string
+		values []float64
+		times  []time.Time
+	}{
+		{"notastream", []float64{3.14}, []time.Time{time.Now()}},
+		{"visits", []float64{3.14, 4.43}, []time.Time{time.Now()}},
+	}
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			times := make([]*timestamp.Timestamp, len(tc.times))
+			for i := range times {
+				times[i], _ = ptypes.TimestampProto(tc.times[i])
+			}
+			in := &seer.UpdateStreamRequest{
+				Name: tc.name,
+				Event: &seer.Event{
+					Values: tc.values,
+					Times:  times,
+				},
+			}
+			s, err := srv.UpdateStream(context.Background(), in)
+			if err == nil {
+				t.Error("expected error but it was nil")
+			}
+			if s != nil {
+				t.Error("expected nil stream, but it was", s)
+			}
+		})
+	}
 }
 
 func TestListStreams(t *testing.T) {

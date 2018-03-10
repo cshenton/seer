@@ -82,6 +82,7 @@ func (srv *Server) UpdateStream(c context.Context, in *seer.UpdateStreamRequest)
 	}
 	err = srv.DB.UpdateStream(in.Name, st)
 	if err != nil {
+		// requires a delete to occur mid request
 		err = status.Error(codes.NotFound, err.Error())
 		return nil, err
 	}
