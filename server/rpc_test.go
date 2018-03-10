@@ -247,7 +247,47 @@ func TestUpdateStreamErrs(t *testing.T) {
 }
 
 func TestListStreams(t *testing.T) {
+	srv := setUp(t)
 
+	var pageNum int32 = 1
+	var pageSize int32 = 2
+
+	in := &seer.ListStreamsRequest{
+		PageSize:   pageSize,
+		PageNumber: pageNum,
+	}
+	s, err := srv.ListStreams(context.Background(), in)
+	if err != nil {
+		t.Error("unexpected error in ListStreams:", err)
+	}
+	if len(s.Streams) != int(pageSize) {
+		t.Errorf("expected %v streams, but got %v", pageSize, len(s.Streams))
+	}
+	if s.Streams[0].Name != "sales" {
+		t.Errorf("expected first name %v, but got %v", "sales", s.Streams[0].Name)
+	}
+	if s.Streams[1].Name != "usage" {
+		t.Errorf("expected first name %v, but got %v", "usage", s.Streams[1].Name)
+	}
+}
+
+func TestListStreamsErrs(t *testing.T) {
+	srv := setUp(t)
+
+	var pageNum int32 = 10
+	var pageSize int32 = 5
+
+	in := &seer.ListStreamsRequest{
+		PageSize:   pageSize,
+		PageNumber: pageNum,
+	}
+	s, err := srv.ListStreams(context.Background(), in)
+	if err == nil {
+		t.Error("expected error, but it was nil")
+	}
+	if s != nil {
+		t.Error("expected nil streamlist, but got ", s)
+	}
 }
 
 func TestGetForecast(t *testing.T) {
