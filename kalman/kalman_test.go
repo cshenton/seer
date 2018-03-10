@@ -3,7 +3,7 @@ package kalman_test
 import (
 	"testing"
 
-	"github.com/chulabs/seer/kalman"
+	"github.com/cshenton/seer/kalman"
 	"gonum.org/v1/gonum/mat"
 )
 

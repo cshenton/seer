@@ -4,7 +4,7 @@ import (
 	"math"
 	"testing"
 
-	"github.com/chulabs/seer/dist/uv"
+	"github.com/cshenton/seer/dist/uv"
 )
 
 func TestNewNormal(t *testing.T) {
