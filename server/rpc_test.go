@@ -127,7 +127,43 @@ func TestGetStreamErrs(t *testing.T) {
 }
 
 func TestDeleteStream(t *testing.T) {
+	srv := setUp(t)
 
+	tt := []string{"sales", "visits", "usage"}
+
+	for _, name := range tt {
+		t.Run(name, func(t *testing.T) {
+			in := &seer.DeleteStreamRequest{
+				Name: name,
+			}
+			_, err := srv.DeleteStream(context.Background(), in)
+			if err != nil {
+				t.Error("unexpected error in DeleteStream:", err)
+			}
+
+			gin := &seer.GetStreamRequest{
+				Name: name,
+			}
+			_, err = srv.GetStream(context.Background(), gin)
+			if err == nil {
+				t.Error("expected error on get after delete, but it was nil")
+			}
+		})
+	}
+}
+
+func TestDeleteStreamErrs(t *testing.T) {
+	srv := setUp(t)
+
+	name := "notastream"
+
+	in := &seer.DeleteStreamRequest{
+		Name: name,
+	}
+	_, err := srv.DeleteStream(context.Background(), in)
+	if err == nil {
+		t.Error("expected error, but it was nil")
+	}
 }
 
 func TestUpdateStream(t *testing.T) {
