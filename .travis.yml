@@ -5,10 +5,10 @@ go:
 
 before_install:
   - go get golang.org/x/tools/cmd/cover
-  - go install github.com/modocache/gover
-  - go install github.com/mattn/goveralls
+  - go get github.com/modocache/gover
+  - go get github.com/mattn/goveralls
 
 script:
   - go test -v -coverprofile=.coverprofile ./...
-  - gover
-  - goveralls -coverprofile=gover.coverprofile -service=travis-ci
+  - $GOPATH/bin/gover
+  - $GOPATH/bin/goveralls -coverprofile=gover.coverprofile -service=travis-ci
