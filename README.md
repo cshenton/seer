@@ -1,6 +1,7 @@
 # Seer: Forecasting Microservice
 [![Build Status](https://travis-ci.org/cshenton/seer.svg?branch=master)](https://travis-ci.org/cshenton/seer)
 [![Coverage Status](https://coveralls.io/repos/github/cshenton/seer/badge.svg?branch=master)](https://coveralls.io/github/cshenton/seer?branch=master)
+[![Go Report Card](https://goreportcard.com/badge/github.com/cshenton/seer)](https://goreportcard.com/report/github.com/cshenton/seer)
 
 ## What is this?
 
