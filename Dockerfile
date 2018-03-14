@@ -1,4 +1,4 @@
-FROM golang:alpine AS build-env
+FROM golang:latest AS build-env
 
 ENV GOPATH=/go
 ENV GOOS=linux
