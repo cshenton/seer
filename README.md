@@ -14,6 +14,7 @@ client.
 It allows you to simply stream in your data as you receive it, then generate
 up to date forecasts.
 
+
 ## Why did I build it?
 
 Seer is the open-source release of a product I built to provide time series
@@ -21,16 +22,25 @@ forecasting as a service. The original product was a multi-tenant cloud API, but
 this release is a single-tenant version of that product intended for internal
 corporate or personal use.
 
+
 ## How do I use it?
 
-Before this is useable generally, I need to set up the build pipeline and write
-the first client libraries. I'll update this then.
+To run a copy of the server locally, use the latest docker image:
+
+```
+docker run -d -p 8080:8080 cshenton/seer
+```
+
+Then use one of the available clients to stream in data and start forecasting:
+
+- [python](https://github.com/cshenton/seer-python)
+
 
 ## Roadmap
 
-- Automate docker image build
 - Python client
 - Speed and accuracy benchmarks
+
 
 ## Other
 
