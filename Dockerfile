@@ -1,11 +1,15 @@
 FROM golang:alpine AS build-env
-ADD . /src
+
+ENV GOPATH=/go
 ENV GOOS=linux
 ENV GOARCH=amd64
 ENV CGO_ENABLED=0
-RUN cd /src && go build -a -v -o ./seer ./main.go
+
+ADD . /go/src/github.com/cshenton/seer
+RUN cd /go/src/github.com/cshenton/seer && go build -a -v -o ./runseer ./main.go
+
 
 FROM alpine
-WORKDIR /app
-COPY --from=build-env /src/seer /app/seer
+WORKDIR /
+COPY --from=build-env /go/src/github.com/cshenton/seer/runseer /seer
 ENTRYPOINT ./seer
