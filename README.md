@@ -26,7 +26,6 @@ the first client libraries. I'll update this then.
 
 ## Roadmap
 
-- CI
 - Automate docker image build
 - Python client
 - Speed and accuracy benchmarks
