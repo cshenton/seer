@@ -6,7 +6,9 @@ ENV GOARCH=amd64
 ENV CGO_ENABLED=0
 
 ADD . /go/src/github.com/cshenton/seer
-RUN cd /go/src/github.com/cshenton/seer && go build -a -v -o ./runseer ./main.go
+RUN cd /go/src/github.com/cshenton/seer && \
+    go get ./... && \
+    go build -a -v -o ./runseer ./main.go
 
 
 FROM alpine
