@@ -33,13 +33,15 @@ docker run -d -p 8080:8080 cshenton/seer
 
 Then use one of the available clients to stream in data and start forecasting:
 
-- [python](https://github.com/cshenton/seer-python)
+- [go](https://github.com/cshenton/seer-golang), `go get github.com/cshenton/seer-golang/...`
+- [python](https://github.com/cshenton/seer-python) `pip install seer`
+
 
 
 ## Roadmap
 
-- Python client
 - Speed and accuracy benchmarks
+- Demo
 
 
 ## Other
