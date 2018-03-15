@@ -4,6 +4,8 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/cshenton/seer)](https://goreportcard.com/report/github.com/cshenton/seer)
 [![Docker Automated Build](https://img.shields.io/docker/build/cshenton/seer.svg)](https://hub.docker.com/r/cshenton/seer/)
 
+![Example Forecast](img/forecast.png)
+
 
 ## What is this?
 
